@@ -54,9 +54,12 @@ def index(request):
 
 @login_required(login_url='/login/')
 def create_route(request):
+    if request.method == "POST":
+        Route.objects.create(author_id=request.user.logist.id, driver_id = request.POST["driver"])
+        return redirect(routes)
     return render(request, 'new-route.html', {"drivers": Driver.objects.filter(is_free=True)})
 
 
 @login_required(login_url='/login/')
 def routes(request):
-    return render(request, 'routes.html', {"drivers": Driver.objects.filter(is_free=True)})
+    return render(request, 'routes.html', {"routes": Route.objects.filter(author=request.user.logist)})

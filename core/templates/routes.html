@@ -31,10 +31,10 @@
                     <div class="navbar__links">
                         <nav>
                             <ul>
-                                <li class="nav__link-diler-item nav__link-item-diler-active"><img
-                                        src="{% static 'assets/img/ico/order-active.svg' %}" alt="Мои заказы"><a
-                                        href="">Заказы</a></li>
-                                <li class="nav__link-diler-item "><img src="{% static 'assets/img/ico/archive.svg' %}"
+                                <li class="nav__link-diler-item"><img
+                                        src="{% static 'assets/img/ico/my-orders.svg' %}" alt="Мои заказы"><a
+                                        href="{% url 'index' %}">Заказы</a></li>
+                                <li class="nav__link-diler-item nav__link-item-diler-active"><img src="{% static 'assets/img/ico/gps.svg' %}"
                                         alt="Маршруты"><a href="{% url 'routes' %}">Маршруты</a></li>
                                 <li class="nav__link-diler-item"><img src="{% static 'assets/img/ico/support.svg' %}"
                                         alt="Помощь"><a
@@ -67,33 +67,21 @@
                 <div class="process__work table-responsive">
                     <table class="result__table">
                         <tr class="result__table-head">
-                            <th>№</th>
-                            <th>Дата</th>
-                            <th>Дата изменения</th>
-                            <th>Количество изделий</th>
-                            <th>Общая площадь изделий</th>
-                            <th>Информация о заказе</th>
-                            <th>Контакт</th>
-                            <th>Адрес</th>
-                            <th>Телефон</th>
-                            <th>Этаж</th>
-                            <th>Клиент</th>
+                            <th>ID</th>
+                            <th>Водитель</th>
                             <th>Статус</th>
+                            <th>Количество заказов</th>
+                            <th></th>
                         </tr>
                         {% for route in routes %}
                         <tr class="result__table-body">
-                            <td>{{data.o_name}}</td>
-                            <td>{{data.plan_date}}</td>
-                            <td>{{data.change_date}}</td>
-                            <td>{{data.qu}}</td>
-                            <td>{{data.sqr}}</td>
-                            <td>{{data.transportinfo}}</td>
-                            <td>{{data.contact}}</td>
-                            <td>{{data.address}}</td>
-                            <td>{{data.phone}}</td>
-                            <td>{{data.floor}}</td>
-                            <td>{{data.c_name}}</td>
-                            <td>{{data.s_name}}</td>
+                            <td>{{ route.id }}</td>
+                            <td>{{ route.driver.name }}</td>
+                            <td>{{ route.is_done }}</td>
+                            <td>{{ route.orders|length }}</td>
+                            <td>
+                                <a href="" class="response">Подробно</a>
+                            </td>
                         </tr>
                         {% endfor %}
                     </table>

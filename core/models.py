@@ -28,7 +28,7 @@ class Logist(models.Model):
         return self.fullName
 
 class Order(models.Model):
-    o_name = models.CharField(max_length=100, null=True, blank=True)
+    o_name = models.CharField(max_length=100, null=True, blank=True, unique=True)
     plan_date = models.CharField(max_length=100, null=True, blank=True)
     change_date = models.CharField(max_length=100, null=True, blank=True)
     qu = models.CharField(max_length=100, null=True, blank=True)
@@ -44,4 +44,5 @@ class Order(models.Model):
 class Route(models.Model):
     author = models.ForeignKey(Logist, on_delete=models.CASCADE, verbose_name="Логист")
     driver = models.ForeignKey(Driver, on_delete=models.CASCADE, verbose_name="Водитель")
+    orders = models.ManyToManyField(Order)
     is_done = models.BooleanField(default=False)

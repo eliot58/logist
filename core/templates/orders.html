@@ -34,7 +34,7 @@
                                 <li class="nav__link-diler-item nav__link-item-diler-active"><img
                                         src="{% static 'assets/img/ico/order-active.svg' %}" alt="Мои заказы"><a
                                         href="">Заказы</a></li>
-                                <li class="nav__link-diler-item "><img src="{% static 'assets/img/ico/archive.svg' %}"
+                                <li class="nav__link-diler-item "><img src="{% static 'assets/img/ico/gps-inactive.svg' %}"
                                         alt="Маршруты"><a href="{% url 'routes' %}">Маршруты</a></li>
                                 <li class="nav__link-diler-item"><img src="{% static 'assets/img/ico/support.svg' %}"
                                         alt="Помощь"><a
@@ -72,10 +72,8 @@
                             <th>Дата изменения</th>
                             <th>Количество изделий</th>
                             <th>Общая площадь изделий</th>
-                            <th>Информация о заказе</th>
+                            <th>Комментарий</th>
                             <th>Контакт</th>
-                            <th>Адрес</th>
-                            <th>Телефон</th>
                             <th>Этаж</th>
                             <th>Клиент</th>
                             <th>Статус</th>
@@ -88,9 +86,18 @@
                             <td>{{data.qu}}</td>
                             <td>{{data.sqr}}</td>
                             <td>{{data.transportinfo}}</td>
-                            <td>{{data.contact}}</td>
-                            <td>{{data.address}}</td>
-                            <td>{{data.phone}}</td>
+                            <td>
+                                <div id="accordeon" class="acc__container">
+                                    <div class="acc__head">
+                                        {{ data.contact }}
+                                        <img src="{% static 'assets/img/ico/slideup.svg' %}" alt="slideup">
+                                    </div>
+                                    <div class="acc__body">
+                                        <p>{{ data.address }}</p>
+                                        <p>{{ data.phone }}</p>
+                                    </div>
+                                </div>
+                            </td>
                             <td>{{data.floor}}</td>
                             <td>{{data.c_name}}</td>
                             <td>{{data.s_name}}</td>
@@ -101,6 +108,8 @@
             </div>
         </section>
     </div>
+    <script src="https://code.jquery.com/jquery-3.6.1.min.js"></script>
+    <script src="{% static 'assets/js/script.js' %}"></script>
 </body>
 
 </html>
