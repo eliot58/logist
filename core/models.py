@@ -41,8 +41,23 @@ class Order(models.Model):
     c_name = models.CharField(max_length=100, null=True, blank=True)
     s_name = models.CharField(max_length=100, null=True, blank=True)    
 
+    class Meta:
+        verbose_name = 'Заказ'
+        verbose_name_plural = 'Заказы'
+
+    def __str__(self):
+        return self.o_name
+
 class Route(models.Model):
+    name = models.CharField(max_length=100, unique=True)
     author = models.ForeignKey(Logist, on_delete=models.CASCADE, verbose_name="Логист")
     driver = models.ForeignKey(Driver, on_delete=models.CASCADE, verbose_name="Водитель")
     orders = models.ManyToManyField(Order)
     is_done = models.BooleanField(default=False)
+
+    class Meta:
+        verbose_name = 'Маршрут'
+        verbose_name_plural = 'Маршруты'
+
+    def __str__(self):
+        return self.name

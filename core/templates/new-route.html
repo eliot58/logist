@@ -61,6 +61,7 @@
                     {% csrf_token %}
                     <div class="new__order-forms">
                         <div class="form">
+                            <input class="account__input" required name="name" type="text" placeholder="Введите название">
                             <select required name="driver" class="account__input">
                                 <option value="" disabled selected>Выберите водителя</option>
                                 {% for driver in drivers %}

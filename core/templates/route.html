@@ -54,7 +54,7 @@
             <div class="profile__content col-xl-10">
                 <div class="profile__nav row">
                     <div class="profile__nav-title col-xl-10">
-                        <h1>Маршруты</h1>
+                        <h1>{{route.name}}</h1>
                     </div>
                     <div class="profile__nav-logo col-xl-2 d-flex align-items-center">
                         <div class="profile__nav-wrapper d-flex align-items-center">
@@ -67,23 +67,40 @@
                 <div class="process__work table-responsive">
                     <table class="result__table">
                         <tr class="result__table-head">
-                            <th>ID</th>
-                            <th>Название</th>
-                            <th>Водитель</th>
+                            <th>№</th>
+                            <th>Дата</th>
+                            <th>Дата изменения</th>
+                            <th>Количество изделий</th>
+                            <th>Общая площадь изделий</th>
+                            <th>Комментарий</th>
+                            <th>Контакт</th>
+                            <th>Этаж</th>
+                            <th>Клиент</th>
                             <th>Статус</th>
-                            <th>Количество заказов</th>
-                            <th></th>
                         </tr>
-                        {% for route in routes %}
+                        {% for order in route.orders.all %}
                         <tr class="result__table-body">
-                            <td>{{ route.id }}</td>
-                            <td>{{ route.name }}</td>
-                            <td>{{ route.driver.name }}</td>
-                            <td>{{ route.is_done }}</td>
-                            <td>{{ route.orders.all|length }}</td>
+                            <td>{{order.o_name}}</td>
+                            <td>{{order.plan_date}}</td>
+                            <td>{{order.change_date}}</td>
+                            <td>{{order.qu}}</td>
+                            <td>{{order.sqr}}</td>
+                            <td>{{order.transportinfo}}</td>
                             <td>
-                                <a href="{% url 'route' route.id %}" class="response">Подробно</a>
+                                <div id="accordeon" class="acc__container">
+                                    <div class="acc__head">
+                                        {{ order.contact }}
+                                        <img src="{% static 'assets/img/ico/slideup.svg' %}" alt="slideup">
+                                    </div>
+                                    <div class="acc__body">
+                                        <p>{{ order.address }}</p>
+                                        <p>{{ order.phone }}</p>
+                                    </div>
+                                </div>
                             </td>
+                            <td>{{order.floor}}</td>
+                            <td>{{order.c_name}}</td>
+                            <td>{{order.s_name}}</td>
                         </tr>
                         {% endfor %}
                     </table>
@@ -91,6 +108,8 @@
             </div>
         </section>
     </div>
+    <script src="https://code.jquery.com/jquery-3.6.1.min.js"></script>
+    <script src="{% static 'assets/js/script.js' %}"></script>
 </body>
 
 </html>

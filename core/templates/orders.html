@@ -21,6 +21,31 @@
                 <a id="close__modal" href="" class="btn main__btn rating__btn">Мой профиль</a>
             </div>
         </div>
+        <div class="popup-review" id="open__modal">
+            <form class="popup" method="post" action="{% url 'add_router' %}">
+                {% csrf_token %}
+                <h3>Добавьте заказ к маршруту</h3>
+                <select required name="route" class="account__input">
+                    <option value="" disabled selected>Выберите маршрут</option>
+                    {% for route in routes %}
+                        <option value="{{ route.id }}">{{ route.name }}</option>
+                    {% endfor %}
+                </select>
+                <input type="text" name="o_name" hidden>
+                <input type="text" name="plan_date" hidden>
+                <input type="text" name="change_date" hidden>
+                <input type="text" name="qu" hidden>
+                <input type="text" name="sqr" hidden>
+                <input type="text" name="transportinfo" hidden>
+                <input type="text" name="contact" hidden>
+                <input type="text" name="address" hidden>
+                <input type="text" name="phone" hidden>
+                <input type="text" name="floor" hidden>
+                <input type="text" name="c_name" hidden>
+                <input type="text" name="s_name" hidden>
+                <button type="submit" id="next__modal" class="btn main__btn rating__btn">Добавить к маршруту</button>
+            </form>
+        </div>
         <section class="balance__company row">
             <div class="profile__navbar col-xl-2">
                 <div class="navbar__content">
@@ -77,6 +102,7 @@
                             <th>Этаж</th>
                             <th>Клиент</th>
                             <th>Статус</th>
+                            <th></th>
                         </tr>
                         {% for data in datas %}
                         <tr class="result__table-body">
@@ -101,6 +127,9 @@
                             <td>{{data.floor}}</td>
                             <td>{{data.c_name}}</td>
                             <td>{{data.s_name}}</td>
+                            <td>
+                                <button type="button" {% if quantity.author.id in send_review %} disabled {% endif %} onclick="createOrder('{{data.o_name}}', '{{data.plan_date}}', '{{data.change_date}}', '{{data.qu}}', '{{data.sqr}}', '{{data.transportinfo}}', '{{data.contact}}', '{{data.address}}', '{{data.phone}}', '{{data.floor}}', '{{data.c_name}}', '{{data.s_name}}')" class="response">Добавить</button>
+                            </td>
                         </tr>
                         {% endfor %}
                     </table>
@@ -110,6 +139,23 @@
     </div>
     <script src="https://code.jquery.com/jquery-3.6.1.min.js"></script>
     <script src="{% static 'assets/js/script.js' %}"></script>
+    <script>
+        function createOrder(o_name, plan_date, change_date, qu, sqr, transportinfo, contact, address, phone, floor, c_name, s_name){
+            document.querySelector('input[name="o_name"]').value = o_name;
+            document.querySelector('input[name="plan_date"]').value = plan_date;
+            document.querySelector('input[name="change_date"]').value = change_date;
+            document.querySelector('input[name="qu"]').value = qu;
+            document.querySelector('input[name="sqr"]').value = sqr;
+            document.querySelector('input[name="transportinfo"]').value = transportinfo;
+            document.querySelector('input[name="contact"]').value = contact;
+            document.querySelector('input[name="address"]').value = address;
+            document.querySelector('input[name="phone"]').value = phone;
+            document.querySelector('input[name="floor"]').value = floor;
+            document.querySelector('input[name="c_name"]').value = c_name;
+            document.querySelector('input[name="s_name"]').value = s_name;
+            document.querySelector(".popup-review").style.display="block";
+        }
+    </script>
 </body>
 
 </html>

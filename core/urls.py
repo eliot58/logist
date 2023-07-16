@@ -13,4 +13,6 @@ urlpatterns = [
     path('logout/', logout_view, name='logout_core_view'),
     path('new_route/', create_route, name='new_route'),
     path('routes/', routes, name='routes'),
+    path('add_order/', add_order, name='add_router'),
+    path('route/<int:id>', route, name='route')
 ]

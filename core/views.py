@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect
 from .forms import *
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
+from django.http import HttpResponse
 from .models import *
 import requests
 import json
@@ -49,13 +50,13 @@ def index(request):
         r = requests.get(f"http://176.62.187.250/logist.php")
         data = json.loads(r.text)
 
-    return render(request, 'orders.html', {"datas": data})
+    return render(request, 'orders.html', {"datas": data, "routes": Route.objects.filter(author=request.user.logist)})
 
 
 @login_required(login_url='/login/')
 def create_route(request):
     if request.method == "POST":
-        Route.objects.create(author_id=request.user.logist.id, driver_id = request.POST["driver"])
+        Route.objects.create(author_id=request.user.logist.id, driver_id = request.POST["driver"], name=request.POST["name"])
         return redirect(routes)
     return render(request, 'new-route.html', {"drivers": Driver.objects.filter(is_free=True)})
 
@@ -63,3 +64,15 @@ def create_route(request):
 @login_required(login_url='/login/')
 def routes(request):
     return render(request, 'routes.html', {"routes": Route.objects.filter(author=request.user.logist)})
+
+
+@login_required(login_url='/login/')
+def add_order(request):
+    order = Order.objects.create(o_name=request.POST["o_name"], plan_date=request.POST["plan_date"], change_date=request.POST["change_date"], qu=request.POST["qu"], sqr=request.POST["sqr"], transportinfo=request.POST["transportinfo"], contact=request.POST["contact"], address=request.POST["address"], phone=request.POST["phone"], floor=request.POST["floor"], c_name=request.POST["c_name"], s_name=request.POST["s_name"])
+    route = Route.objects.get(id=request.POST["route"])
+    route.orders.add(order)
+    return redirect(routes)
+
+@login_required(login_url='/login/')
+def route(request, id):
+    return render(request, 'route.html', {"route": Route.objects.get(id=id)})
