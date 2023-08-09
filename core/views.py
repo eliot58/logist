@@ -47,8 +47,8 @@ def index(request):
         return redirect(login_view)
     
     re = redis.StrictRedis(
-        host='redis',
-        port=5370
+        host='127.0.0.1',
+        port=6379
     )
 
     orders = re.get(f"orders_{request.user.username}")
