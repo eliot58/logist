@@ -11,8 +11,7 @@ urlpatterns = [
     url(r'^password-reset/confirm/(?P<uidb64>[-\w]+)/(?P<token>[-\w]+)/$', auth_views.PasswordResetConfirmView.as_view(template_name='auth/password_reset_confirm.html',form_class=PassSetForm), name ='password_reset_confirm'),
     path('reset/done/', auth_views.PasswordResetCompleteView.as_view(template_name='auth/password_reset_complete.html'), name = 'password_reset_complete'),
     path('logout/', logout_view, name='logout_core_view'),
-    path('new_route/', create_route, name='new_route'),
     path('routes/', routes, name='routes'),
-    path('add_order/', add_order, name='add_router'),
-    path('route/<int:id>', route, name='route')
+    path('route/<int:id>', route, name='route'),
+    path('create-route/', create_route, name='create_route')
 ]

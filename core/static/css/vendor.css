@@ -1305,6 +1305,21 @@ textarea {
   opacity: 1;
   text-align: center;
 }
+
+.cart-popup {
+  position: fixed;
+  top: 10%;
+  left: 35%;
+  padding: 40px;
+  width: 400px;
+  margin-left: -200px;
+  background: #fff;
+  border-radius: 4px;
+  z-index: 99999;
+  opacity: 1;
+  text-align: center;
+}
+
 .popup h3 {
   color: #080696;
   font-size: 16px;
@@ -1397,4 +1412,72 @@ textarea {
 
 .diler_work__ico svg path {
   stroke: #15CE73;
+}
+
+.custom-pagination {
+  padding: 14px 20px;
+  box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.1);
+  border-radius: 15px;
+  margin: 24px auto;
+}
+
+.pagination__item {
+  display: block;
+  padding: 5px 8px;
+  cursor: pointer;
+  margin: 0px 10px;
+  color: #00ff80;
+}
+
+.pagination__item-active {
+  padding: 5px 8px;
+  background-color: #00ff80;
+  color: #fff;
+  border-radius: 5px;
+}
+
+#snackbar {
+  visibility: hidden; /* Hidden by default. Visible on click */
+  min-width: 250px; /* Set a default minimum width */
+  margin-left: -125px; /* Divide value of min-width by 2 */
+  background-color: #333; /* Black background color */
+  color: #fff; /* White text color */
+  text-align: center; /* Centered text */
+  border-radius: 2px; /* Rounded borders */
+  padding: 16px; /* Padding */
+  position: fixed; /* Sit on top of the screen */
+  z-index: 1; /* Add a z-index if needed */
+  left: 50%; /* Center the snackbar */
+  bottom: 30px; /* 30px from the bottom */
+}
+
+/* Show the snackbar when clicking on a button (class added with JavaScript) */
+.show {
+  visibility: visible !important; /* Show the snackbar */
+
+/* Add animation: Take 0.5 seconds to fade in and out the snackbar.
+However, delay the fade out process for 2.5 seconds */
+  -webkit-animation: fadein 0.5s, fadeout 0.5s 2.5s;
+  animation: fadein 0.5s, fadeout 0.5s 2.5s;
+}
+
+/* Animations to fade the snackbar in and out */
+@-webkit-keyframes fadein {
+  from {bottom: 0; opacity: 0;}
+  to {bottom: 30px; opacity: 1;}
+}
+
+@keyframes fadein {
+  from {bottom: 0; opacity: 0;}
+  to {bottom: 30px; opacity: 1;}
+}
+
+@-webkit-keyframes fadeout {
+  from {bottom: 30px; opacity: 1;}
+  to {bottom: 0; opacity: 0;}
+}
+
+@keyframes fadeout {
+  from {bottom: 30px; opacity: 1;}
+  to {bottom: 0; opacity: 0;}
 }

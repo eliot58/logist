@@ -29,17 +29,19 @@ class Logist(models.Model):
 
 class Order(models.Model):
     o_name = models.CharField(max_length=100, null=True, blank=True, unique=True)
-    plan_date = models.CharField(max_length=100, null=True, blank=True)
-    change_date = models.CharField(max_length=100, null=True, blank=True)
-    qu = models.CharField(max_length=100, null=True, blank=True)
-    sqr = models.CharField(max_length=100, null=True, blank=True)
-    transportinfo = models.CharField(max_length=100, null=True, blank=True)
-    contact = models.CharField(max_length=100, null=True, blank=True)
-    address = models.CharField(max_length=100, null=True, blank=True)
-    phone = models.CharField(max_length=100, null=True, blank=True)
-    floor = models.CharField(max_length=100, null=True, blank=True)
-    c_name = models.CharField(max_length=100, null=True, blank=True)
-    s_name = models.CharField(max_length=100, null=True, blank=True)    
+    plan_date = models.CharField(max_length=100)
+    change_date = models.CharField(max_length=100)
+    qu = models.CharField(max_length=100)
+    sqr = models.CharField(max_length=100)
+    transportinfo = models.CharField(max_length=100)
+    contact = models.CharField(max_length=100)
+    address = models.CharField(max_length=100)
+    phone = models.CharField(max_length=100)
+    floor = models.CharField(max_length=100)
+    c_name = models.CharField(max_length=100)
+    s_name = models.CharField(max_length=100)
+    pos = models.CharField(max_length=60)   
+    response = models.FileField(upload_to="response", null=True, blank=True)
 
     class Meta:
         verbose_name = 'Заказ'
@@ -49,15 +51,14 @@ class Order(models.Model):
         return self.o_name
 
 class Route(models.Model):
-    name = models.CharField(max_length=100, unique=True)
     author = models.ForeignKey(Logist, on_delete=models.CASCADE, verbose_name="Логист")
     driver = models.ForeignKey(Driver, on_delete=models.CASCADE, verbose_name="Водитель")
+    route_link = models.URLField()
     orders = models.ManyToManyField(Order)
-    is_done = models.BooleanField(default=False)
 
     class Meta:
         verbose_name = 'Маршрут'
         verbose_name_plural = 'Маршруты'
 
     def __str__(self):
-        return self.name
+        return self.author.fullName
