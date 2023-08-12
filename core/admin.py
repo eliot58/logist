@@ -13,7 +13,7 @@ class LogistAdmin(admin.ModelAdmin):
 
 @admin.register(Order)
 class OrderAdmin(admin.ModelAdmin):
-    list_display = ['o_name', 'plan_date', 'change_date', 'qu', 'sqr', 'address', 'floor', 'c_name', 's_name']
+    list_display = ['o_name', 'plan_date', 'date_logist', 'qu', 'sqr', 'address', 'floor', 'c_name', 's_name']
 
 @admin.register(Route)
 class RouteAdmin(admin.ModelAdmin):

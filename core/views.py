@@ -8,7 +8,6 @@ import json
 import redis
 from django.views.decorators.http import require_POST
 from django.views.decorators.csrf import csrf_exempt
-from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.http import JsonResponse
 
 
@@ -78,15 +77,6 @@ def index(request):
     else:
         filtered = orders
 
-    paginator = Paginator(filtered, 10)
-    page = request.GET.get('page')
-    try:
-        filtered = paginator.page(page)
-    except PageNotAnInteger:
-        filtered = paginator.page(1)
-    except EmptyPage:
-        filtered = paginator.page(paginator.num_pages)
-
     return render(request, 'orders.html', {"orders": filtered, "drivers": Driver.objects.filter(is_free=True)})
 
 
@@ -101,8 +91,8 @@ def routes(request):
 def create_route(request):
     data = json.loads(request.body.decode())
     route = Route.objects.create(author_id=request.user.logist.id, driver_id = int(data["driver_id"]), route_link = data["route_link"])
-    for _, value in data["orders"].items():
-        order = Order.objects.create(o_name=value["o_name"], plan_date=value["plan_date"], change_date=value["change_date"], qu=value["qu"], sqr=value["sqr"], transportinfo=value["transportinfo"], contact=value["contact"], address=value["address"], phone=value["phone"], floor=value["floor"], c_name=value["c_name"], s_name=value["s_name"])
+    for value in data["orders"]:
+        order = Order.objects.create(o_name=value["o_name"], plan_date=value["plan_date"], date_logist=value["date_logist"], qu=value["qu"], sqr=value["sqr"], transportinfo=value["transportinfo"], contact=value["contact"], address=value["address"], phone=value["phone"], floor=value["floor"], c_name=value["c_name"], s_name=value["s_name"])
         route.orders.add(order)
     driver = Driver.objects.get(id=int(data["driver_id"]))
     driver.is_free = False

@@ -147,19 +147,20 @@
                     </div>
                 </div>
                 <select id="filter" style="margin-left: 60px;margin-right: 20px; border: 1px solid #00ff80;box-shadow: 0px 4px 50px rgba(0, 0, 0, 0.05);border-radius: 15px;padding: 10px 60px;" onchange="window.location.href = `?filter=${this.value}`">
-                    <option value="" selected></option>
+                    <option value="all" selected>Все</option>
                     <option value="work">В производстве</option>
                     <option value="sklad">На складе</option>
                     <option value="loaded">Отгружен</option>
                     <option value="finish">Завершен</option>
                 </select>
                 <button type="button" style="background: #00ff80;border-radius: 15px;border: none;padding: 10px 60px;font-size: 16px;font-weight: 700; margin-top: 10px;" onclick="window.location.href = '?reload=1'">Обновить</button>
+                <!-- <button type="button" style="background: #00ff80;border-radius: 15px;border: none;padding: 10px 60px;font-size: 16px;font-weight: 700; margin-top: 10px;" onclick="addAll()">Добавить все</button> -->
                 <div class="process__work table-responsive">
                     <table class="result__table">
                         <tr class="result__table-head">
                             <th>№</th>
                             <th>Дата</th>
-                            <th>Дата изменения</th>
+                            <th>Дата логиста</th>
                             <th>Количество изделий</th>
                             <th>Общая площадь изделий</th>
                             <th>Комментарий</th>
@@ -171,76 +172,60 @@
                         </tr>
                         {% for order in orders %}
                         <tr class="result__table-body">
-                            <td>{{order.o_name}}</td>
+                            <td id="o_name">{{order.o_name}}</td>
                             {% if order.plan_date %}
-                                <td>{{order.plan_date}}</td>
+                                <td id="plan_date">{{order.plan_date}}</td>
                             {% else %}
-                                <td></td>
+                                <td id="plan_date"></td>
                             {% endif %}
-                            {% if order.change_date %}
-                                <td>{{order.change_date|dateFormat}}</td>
-                            {% else %}
-                                <td></td>
-                            {% endif %}
+                            <td><input id="date_logist" type="date" style="max-width: 90px;
+                                border: 2px solid #15CE73;
+                                border-radius: 8px;
+                                text-align: center;
+                                padding: 3px 10px;
+                                transition: all 0.3s;"></td>
                             {% if order.qu %}
-                                <td>{{order.qu}}</td>
+                                <td id="qu">{{order.qu}}</td>
                             {% else %}
-                                <td></td>
+                                <td id="qu"></td>
                             {% endif %}
                             {% if order.sqr %}
-                                <td>{{order.sqr}}</td>
+                                <td id="sqr">{{order.sqr}}</td>
                             {% else %}
-                                <td></td>
+                                <td id="sqr"></td>
                             {% endif %}
                             {% if order.transportinfo %}
-                                <td style="max-width: 200px;" contenteditable="true">{{order.transportinfo}}</td>
+                                <td id="transportinfo" style="max-width: 200px;" contenteditable="true">{{order.transportinfo}}</td>
                             {% else %}
-                                <td></td>
+                                <td id="transportinfo"></td>
                             {% endif %}
                             <td style="max-width: 200px;">
                                 <div id="accordeon" class="acc__container">
-                                    <div class="acc__head">
+                                    <div id="contact" class="acc__head">
                                         {{ order.contact }}
                                         <img src="{% static 'assets/img/ico/slideup.svg' %}" alt="slideup">
                                     </div>
                                     <div class="acc__body">
-                                        <p>{{ order.c_name }}</p>
-                                        <p>{{ order.phone }}</p>
+                                        <p id="c_name">{{ order.c_name }}</p>
+                                        <p id="phone">{{ order.phone }}</p>
                                     </div>
                                 </div>
                             </td>
                             {% if order.floor %}
-                                <td>{{order.floor}}</td>
+                                <td id="floor">{{order.floor}}</td>
                             {% else %}
-                                <td></td>
+                                <td id="floor"></td>
                             {% endif %}
-                            <td style="max-width: 200px;" contenteditable="true">{{order.address}}</td>
-                            <td>{{order.s_name}}</td>
+                            <td id="address" style="max-width: 200px;" contenteditable="true">{{order.address}}</td>
+                            <td id="s_name">{{order.s_name}}</td>
                             <td>
                                 <button type="button"
-                                    onclick="createRoute('{{order.o_name}}', this.parentNode.parentNode.getElementsByTagName('td')[0].textContent, this.parentNode.parentNode.getElementsByTagName('td')[1].textContent, this.parentNode.parentNode.getElementsByTagName('td')[2].textContent, this.parentNode.parentNode.getElementsByTagName('td')[3].textContent, this.parentNode.parentNode.getElementsByTagName('td')[4].textContent, this.parentNode.previousElementSibling.previousElementSibling.previousElementSibling.previousElementSibling.previousElementSibling.textContent, '{{order.contact}}', this.parentNode.previousElementSibling.previousElementSibling.textContent, '{{order.phone}}', this.parentNode.previousElementSibling.previousElementSibling.previousElementSibling.textContent, '{{order.c_name}}', '{{order.s_name}}');"
+                                    onclick="createRoute('{{order.o_name}}', this.parentNode.parentNode.getElementsByTagName('td')[0].textContent, this.parentNode.parentNode.getElementsByTagName('td')[1].textContent, this.parentNode.parentNode.getElementsByTagName('td')[2].getElementsByTagName('input')[0].value, this.parentNode.parentNode.getElementsByTagName('td')[3].textContent, this.parentNode.parentNode.getElementsByTagName('td')[4].textContent, this.parentNode.previousElementSibling.previousElementSibling.previousElementSibling.previousElementSibling.previousElementSibling.textContent, '{{order.contact}}', this.parentNode.previousElementSibling.previousElementSibling.textContent, '{{order.phone}}', this.parentNode.previousElementSibling.previousElementSibling.previousElementSibling.textContent, '{{order.c_name}}', '{{order.s_name}}');"
                                     class="response">Добавить</button>
                             </td>
                         </tr>
                         {% endfor %}
                     </table>
-                </div>
-                <div class="custom-pagination d-flex col-xl-4 align-items-center">
-                    {% if orders.has_previous %}
-                        <a class="left-arrow" href="?page={{ orders.previous_page_number }}"><img src="{% static 'assets/img/ico/left_arrow.svg' %}" alt=""></a>
-                    {% endif %}
-                    {% for i in orders.paginator.page_range %}
-                        {% if i > orders.number|add:-4 and i < orders.number|add:4 %}
-                            {% if orders.number == i %}
-                                <a style="text-decoration: none;" href="" class="pagination__item pagination__item-active">{{ orders.number }}</a>
-                            {% else %}
-                                <a style="text-decoration: none;" href="?page={{ i }}" class="pagination__item">{{ i }}</a>
-                            {% endif %}
-                        {% endif %}
-                    {% endfor %}
-                    {% if orders.has_next %}
-                        <a class="right-arrow" href="?page={{ orders.next_page_number }}"><img src="{% static 'assets/img/ico/right_arrow.svg' %}" alt=""></a>
-                    {% endif %}
                 </div>
             </div>
         </section>
@@ -258,21 +243,68 @@
 
         window.addEventListener('load', function () {
             const urlParams = new URLSearchParams(window.location.search);
-            document.querySelector("select#filter").value = urlParams.get('filter')
+            if (urlParams.get('filter') == null){
+                document.querySelector("select#filter").value = "all"
+            } else {
+                document.querySelector("select#filter").value = urlParams.get('filter')
+            }
+
+            
         })
 
+        var draggables = document.querySelectorAll(".result__table-body.popup_table");
+        var draggedItem = null;
 
-        async function createRoute(order_name, o_name, plan_date, change_date, qu, sqr, transportinfo, contact, address, phone, floor, c_name, s_name) {
+        function handleDomChanges(mutationsList, observer) {
+            for (let mutation of mutationsList) {
+                if (mutation.type === 'childList') {
+                    draggables = document.querySelectorAll(".result__table-body.popup_table");
+                } else if (mutation.type === 'attributes') {
+                    draggables = document.querySelectorAll(".result__table-body.popup_table");
+                }
+            }
+        }
+
+        const observer = new MutationObserver(handleDomChanges);
+
+        observer.observe(document, { childList: true, subtree: true, attributes: true, attributeOldValue: true });
+
+
+        function swapElements(index1, index2) {
+
+            let temp = draggables[index1].innerHTML;
+
+            draggables[index1].innerHTML = draggables[index2].innerHTML
+
+            draggables[index2].innerHTML = temp
+
+            orders = localStorage.getItem("orders")
+
+            orders = JSON.parse(orders)
+
+            let tmp = orders[index1]
+
+            orders[index1] = orders[index2]
+
+            orders[index2] = tmp
+
+            localStorage.setItem("orders", JSON.stringify(orders))
+
+        }
+
+
+        async function createRoute(order_name, o_name, plan_date, date_logist, qu, sqr, transportinfo, contact, address, phone, floor, c_name, s_name) {
             orders = localStorage.getItem("orders")
             if (orders == null) {
-                orders = {}
+                orders = []
             } else {
                 orders = JSON.parse(orders)
             }
             let response = await fetch(`https://geocode-maps.yandex.ru/1.x/?apikey=52427b0d-4b85-4b1a-828b-ad4cf6903c9f&geocode=${address}&format=json`);
 
             let data = await response.json();
-            orders[order_name] = {"o_name": o_name, "plan_date": plan_date, "change_date": change_date, "qu": qu, "sqr": sqr, "transportinfo": transportinfo, "contact": contact, "address": address, "phone": phone, "floor": floor, "c_name": c_name, "s_name": s_name, "pos": data.response.GeoObjectCollection.featureMember[0].GeoObject.Point.pos}
+
+            orders.push({"o_name": o_name, "plan_date": plan_date, "date_logist": date_logist, "qu": qu, "sqr": sqr, "transportinfo": transportinfo, "contact": contact, "address": address, "phone": phone, "floor": floor, "c_name": c_name, "s_name": s_name, "pos": data.response.GeoObjectCollection.featureMember[0].GeoObject.Point.pos})
 
             localStorage.setItem("orders", JSON.stringify(orders))
 
@@ -292,22 +324,42 @@
             const table = document.querySelector(".result__table.popup_table")
             orders = JSON.parse(localStorage.getItem("orders"))
 
-            for (const key in orders){
+            for (let i = 0; i < orders.length; i++){
                 const tr = document.createElement("tr");
+                tr.setAttribute("draggable", "true")
                 tr.classList.add("result__table-body")
                 tr.classList.add("popup_table")
-                tr.innerHTML = `<td>${orders[key]["o_name"]}</td>
-                                <td>${orders[key]["qu"]=='None' ? '' : orders[key]["qu"]}</td>
-                                <td>${orders[key]["sqr"]=='None' ? '' : orders[key]["sqr"]}</td>
-                                <td style="max-width: 200px;">${orders[key]["transportinfo"]=='None' ? '' : orders[key]["transportinfo"]}</td>
-                                <td>${orders[key]["floor"]=='None' ? '' : orders[key]["floor"]}</td>
-                                <td style="max-width: 200px;">${orders[key]["address"]}</td>
-                                <td>${orders[key]["s_name"]}</td>
+                tr.innerHTML = `<td>${orders[i]["o_name"]}</td>
+                                <td>${orders[i]["qu"]=='None' ? '' : orders[i]["qu"]}</td>
+                                <td>${orders[i]["sqr"]=='None' ? '' : orders[i]["sqr"]}</td>
+                                <td style="max-width: 200px;">${orders[i]["transportinfo"]=='None' ? '' : orders[i]["transportinfo"]}</td>
+                                <td>${orders[i]["floor"]=='None' ? '' : orders[i]["floor"]}</td>
+                                <td style="max-width: 200px;">${orders[i]["address"]}</td>
+                                <td>${orders[i]["s_name"]}</td>
                                 <td>
                                     <button type="button"
-                                        onclick="removeRoute('${key}'); this.parentNode.parentNode.remove()"
+                                        onclick="removeRoute('${i}'); this.parentNode.parentNode.remove()"
                                         class="response">Удалить</button>
                                 </td>`
+
+                tr.addEventListener("dragstart", function(event) {
+                    draggedItem = this;
+                    event.dataTransfer.effectAllowed = "move";
+                    event.dataTransfer.setData("text/plain", null);
+                })
+
+                tr.addEventListener("dragover", function(event) {
+                    event.preventDefault();
+                })
+
+                tr.addEventListener("drop", function(event) {
+                    if (draggedItem !== this) {
+                        var index1 = Array.from(draggables).indexOf(draggedItem);
+                        var index2 = Array.from(draggables).indexOf(this);
+                        console.log(index1, index2)
+                        swapElements(index1, index2);
+                    }
+                })
                 table.append(tr)
             }
             document.querySelector('.popup-info').style.display = 'block';
@@ -315,7 +367,7 @@
 
         function removeRoute(key){
             orders = JSON.parse(localStorage.getItem("orders"))
-            delete orders[key]
+            orders.splice(Number(key), 1);
             localStorage.setItem("orders", JSON.stringify(orders))
         }
 
@@ -329,13 +381,13 @@
 
             let routes = [];
 
-            for (const key in orders) {
-                routes.push(orders[key]["pos"].split(" ")[1] + "%2C" + orders[key]["pos"].split(" ")[0])
+            for (const order of orders) {
+                routes.push(order["pos"].split(" ")[1] + "%2C" + order["pos"].split(" ")[0])
             }
 
 
             div.style.cssText = 'position:relative;overflow:hidden;'
-            div.innerHTML = `<a href="https://yandex.ru/maps/213/moscow/?utm_medium=mapframe&utm_source=maps" style="color:#eee;font-size:12px;position:absolute;top:0px;">Москва</a><a href="https://yandex.ru/maps/213/moscow/?ll=37.617700%2C55.755863&mode=routes&routes%5BactiveComparisonMode%5D=auto&rtext=${routes.join('~')}&rtt=comparison&ruri=~&utm_medium=mapframe&utm_source=maps&z=10" style="color:#eee;font-size:12px;position:absolute;top:14px;">Яндекс Карты</a><iframe src="https://yandex.ru/map-widget/v1/?ll=37.617700%2C55.755863&mode=routes&routes%5BactiveComparisonMode%5D=auto&rtext=${routes.join('~')}&rtt=comparison&ruri=~&z=10" width="800" height="600" frameborder="1" allowfullscreen="true" style="position:relative;"></iframe>`
+            div.innerHTML = `<a href="https://yandex.ru/maps/213/moscow/?utm_medium=mapframe&utm_source=maps" style="color:#eee;font-size:12px;position:absolute;top:0px;">Москва</a><a href="https://yandex.ru/maps/213/moscow/?ll=37.617700%2C55.755863&mode=routes&routes%5BactiveComparisonMode%5D=auto&rtext=55.865709%2C36.768240~${routes.join('~')}&rtt=comparison&ruri=~&utm_medium=mapframe&utm_source=maps&z=10" style="color:#eee;font-size:12px;position:absolute;top:14px;">Яндекс Карты</a><iframe src="https://yandex.ru/map-widget/v1/?ll=37.617700%2C55.755863&mode=routes&routes%5BactiveComparisonMode%5D=auto&rtext=55.865709%2C36.768240~${routes.join('~')}&rtt=comparison&ruri=~&z=10" width="800" height="600" frameborder="1" allowfullscreen="true" style="position:relative;"></iframe>`
             cart_popup.append(div)
             document.querySelector('.popup-cart').style.display = 'block';
         }
@@ -345,8 +397,8 @@
 
             let routes = [];
 
-            for (const key in orders) {
-                routes.push(orders[key]["pos"].split(" ")[1] + "%2C" + orders[key]["pos"].split(" ")[0])
+            for (const order of orders) {
+                routes.push(order["pos"].split(" ")[1] + "%2C" + order["pos"].split(" ")[0])
             }
 
             let data = {
@@ -372,6 +424,32 @@
 
 
         }
+
+        // async function addAll(){
+        //     orders = localStorage.getItem("orders")
+        //     if (orders == null) {
+        //         orders = []
+        //     } else {
+        //         orders = JSON.parse(orders)
+        //     }
+        //     const tr = document.querySelectorAll(".result__table-body")
+        //     for (const order of tr) {
+        //         let response = await fetch(`https://geocode-maps.yandex.ru/1.x/?apikey=52427b0d-4b85-4b1a-828b-ad4cf6903c9f&geocode=${order.querySelector("#address").textContent}&format=json`);
+
+        //         let data = await response.json();
+
+                
+        //         orders.push({"o_name": order.querySelector("#o_name").textContent, "plan_date": order.querySelector("#plan_date").textContent, "date_logist": order.querySelector("#date_logist").value, "qu": order.querySelector("#qu").textContent, "sqr": order.querySelector("#sqr").textContent, "transportinfo": order.querySelector("#transportinfo").textContent, "contact": order.querySelector("#contact").textContent, "address": order.querySelector("#address").textContent, "phone": order.querySelector("#phone").textContent, "floor": order.querySelector("#floor").textContent, "c_name": order.querySelector("#c_name").textContent, "s_name": order.querySelector("#s_name").textContent, "pos": data.response.GeoObjectCollection.featureMember[0].GeoObject.Point.pos})
+        //     }
+
+        //     localStorage.setItem("orders", JSON.stringify(orders))
+
+        //     var x = document.getElementById("snackbar")
+
+        //     x.className = "show";
+
+        //     setTimeout(function(){ x.className = x.className.replace("show", ""); }, 3000);
+        // }
 
     </script>
 </body>

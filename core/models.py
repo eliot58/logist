@@ -30,7 +30,7 @@ class Logist(models.Model):
 class Order(models.Model):
     o_name = models.CharField(max_length=100, null=True, blank=True, unique=True)
     plan_date = models.CharField(max_length=100)
-    change_date = models.CharField(max_length=100)
+    date_logist = models.CharField(max_length=100)
     qu = models.CharField(max_length=100)
     sqr = models.CharField(max_length=100)
     transportinfo = models.CharField(max_length=100)
