@@ -178,7 +178,7 @@
                             {% else %}
                                 <td id="plan_date"></td>
                             {% endif %}
-                            <td><input id="date_logist" type="date" style="max-width: 90px;
+                            <td><input id="date_logist" onchange="changeLogistDate(this.parentNode.parentNode.getElementsByTagName('td')[0].textContent)" type="date" style="max-width: 90px;
                                 border: 2px solid #15CE73;
                                 border-radius: 8px;
                                 text-align: center;
@@ -249,8 +249,16 @@
                 document.querySelector("select#filter").value = urlParams.get('filter')
             }
 
+            const tr = document.querySelectorAll(".result__table-body")
+
+            for (const elem of tr){
+                
+            }
+
             
         })
+
+
 
         var draggables = document.querySelectorAll(".result__table-body.popup_table");
         var draggedItem = null;
@@ -272,12 +280,6 @@
 
         function swapElements(index1, index2) {
 
-            let temp = draggables[index1].innerHTML;
-
-            draggables[index1].innerHTML = draggables[index2].innerHTML
-
-            draggables[index2].innerHTML = temp
-
             orders = localStorage.getItem("orders")
 
             orders = JSON.parse(orders)
@@ -290,6 +292,24 @@
 
             localStorage.setItem("orders", JSON.stringify(orders))
 
+            let temp = draggables[index1].innerHTML;
+
+            draggables[index1].innerHTML = draggables[index2].innerHTML
+
+            draggables[index2].innerHTML = temp
+
+        }
+
+        function changeLogistDate(o_name){
+            dateLogist = localStorage.getItem("dateLogist")
+            if (dateLogist == null) {
+                dateLogist = {}
+            } else {
+                dateLogist = JSON.parse(dateLogist)
+            }
+            dateLogist[o_name] = {"date": this.value}
+
+            localStorage.setItem("dateLogist", JSON.stringify(dateLogist))
         }
 
 

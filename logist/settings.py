@@ -39,7 +39,10 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'core'
+    'core',
+    'rest_framework',
+    'rest_framework.authtoken',
+    'api'
 ]
 
 MIDDLEWARE = [
@@ -138,3 +141,14 @@ else:
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+TOKEN_EXPIRED_AFTER_SECONDS = 60 * 60 * 24 * 7
+
+
+PASSWORD_HASHERS = [
+    'django.contrib.auth.hashers.MD5PasswordHasher',
+]
+
+
+DATA_UPLOAD_MAX_MEMORY_SIZE = 10485760
