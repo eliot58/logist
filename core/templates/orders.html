@@ -86,7 +86,7 @@
 
         <div class="popup-info popup-fade" id="send__modal">
             <div class="cart-popup" style="width: 1200px;">
-                <img src="{% static 'assets/img/ico/delete.svg' %}" style="position: absolute; top: 10px; right: 10px; padding: 5px;" onclick="this.parentNode.parentNode.style.display = 'none'" alt="">
+                <img src="{% static 'assets/img/ico/delete.svg' %}" style="position: absolute; top: 10px; right: 10px; padding: 5px;" onclick="this.parentNode.parentNode.style.display = 'none'; location.reload()" alt="">
                 <table class="result__table popup_table">
                     <tr class="result__table-head popup_table">
                         <th>№</th>
@@ -178,7 +178,7 @@
                             {% else %}
                                 <td id="plan_date"></td>
                             {% endif %}
-                            <td><input id="date_logist" onchange="changeLogistDate(this.parentNode.parentNode.getElementsByTagName('td')[0].textContent)" type="date" style="max-width: 90px;
+                            <td><input id="date_logist" onchange="changeLogistDate(this.parentNode.parentNode.getElementsByTagName('td')[0].textContent, this.value)" type="date" style="max-width: 90px;
                                 border: 2px solid #15CE73;
                                 border-radius: 8px;
                                 text-align: center;
@@ -220,7 +220,7 @@
                             <td id="s_name">{{order.s_name}}</td>
                             <td>
                                 <button type="button"
-                                    onclick="createRoute('{{order.o_name}}', this.parentNode.parentNode.getElementsByTagName('td')[0].textContent, this.parentNode.parentNode.getElementsByTagName('td')[1].textContent, this.parentNode.parentNode.getElementsByTagName('td')[2].getElementsByTagName('input')[0].value, this.parentNode.parentNode.getElementsByTagName('td')[3].textContent, this.parentNode.parentNode.getElementsByTagName('td')[4].textContent, this.parentNode.previousElementSibling.previousElementSibling.previousElementSibling.previousElementSibling.previousElementSibling.textContent, '{{order.contact}}', this.parentNode.previousElementSibling.previousElementSibling.textContent, '{{order.phone}}', this.parentNode.previousElementSibling.previousElementSibling.previousElementSibling.textContent, '{{order.c_name}}', '{{order.s_name}}');"
+                                    onclick="createRoute('{{order.o_name}}', this.parentNode.parentNode.getElementsByTagName('td')[0].textContent, this.parentNode.parentNode.getElementsByTagName('td')[1].textContent, this.parentNode.parentNode.getElementsByTagName('td')[2].getElementsByTagName('input')[0].value, this.parentNode.parentNode.getElementsByTagName('td')[3].textContent, this.parentNode.parentNode.getElementsByTagName('td')[4].textContent, this.parentNode.previousElementSibling.previousElementSibling.previousElementSibling.previousElementSibling.previousElementSibling.textContent, '{{order.contact}}', this.parentNode.previousElementSibling.previousElementSibling.textContent, '{{order.phone}}', this.parentNode.previousElementSibling.previousElementSibling.previousElementSibling.textContent, '{{order.c_name}}', '{{order.s_name}}'); this.style.backgroundColor = 'red'; this.textContent = 'Добавлено'"
                                     class="response">Добавить</button>
                             </td>
                         </tr>
@@ -249,10 +249,34 @@
                 document.querySelector("select#filter").value = urlParams.get('filter')
             }
 
+            dateLogist = localStorage.getItem("dateLogist")
+            if (dateLogist == null) {
+                dateLogist = {}
+            } else {
+                dateLogist = JSON.parse(dateLogist)
+            }
+
+            orders = localStorage.getItem("orders")
+            if (orders == null) {
+                orders = []
+            } else {
+                orders = JSON.parse(orders)
+            }
+
+            const o_names = orders.map((x) => x["o_name"])
+
             const tr = document.querySelectorAll(".result__table-body")
 
             for (const elem of tr){
-                
+                const o_name = elem.querySelector("#o_name").textContent
+                if (o_name in dateLogist) {
+                    elem.querySelector("#date_logist").value = dateLogist[o_name]
+                }
+                if (o_names.includes(o_name)) {
+                    const btn = elem.querySelector("button")
+                    btn.style.backgroundColor = "red"
+                    btn.textContent = "Добавлено"
+                }
             }
 
             
@@ -300,14 +324,14 @@
 
         }
 
-        function changeLogistDate(o_name){
+        function changeLogistDate(o_name, value){
             dateLogist = localStorage.getItem("dateLogist")
             if (dateLogist == null) {
                 dateLogist = {}
             } else {
                 dateLogist = JSON.parse(dateLogist)
             }
-            dateLogist[o_name] = {"date": this.value}
+            dateLogist[o_name] = value
 
             localStorage.setItem("dateLogist", JSON.stringify(dateLogist))
         }
@@ -441,6 +465,8 @@
 
 
             document.querySelector('.popup-review').style.display = 'none';
+
+            location.reload()
 
 
         }

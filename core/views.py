@@ -92,7 +92,7 @@ def create_route(request):
     data = json.loads(request.body.decode())
     route = Route.objects.create(author_id=request.user.logist.id, driver_id = int(data["driver_id"]), route_link = data["route_link"])
     for value in data["orders"]:
-        order = Order.objects.create(o_name=value["o_name"], plan_date=value["plan_date"], date_logist=value["date_logist"], qu=value["qu"], sqr=value["sqr"], transportinfo=value["transportinfo"], contact=value["contact"], address=value["address"], phone=value["phone"], floor=value["floor"], c_name=value["c_name"], s_name=value["s_name"])
+        order = Order.objects.create(o_name=value["o_name"], plan_date=value["plan_date"], date_logist=value["date_logist"], qu=value["qu"], sqr=value["sqr"], transportinfo=value["transportinfo"], contact=value["contact"], address=value["address"], phone=value["phone"], floor=value["floor"], c_name=value["c_name"], s_name=value["s_name"], pos=value["pos"])
         route.orders.add(order)
     driver = Driver.objects.get(id=int(data["driver_id"]))
     driver.is_free = False

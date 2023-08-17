@@ -150,5 +150,10 @@ PASSWORD_HASHERS = [
     'django.contrib.auth.hashers.MD5PasswordHasher',
 ]
 
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'api.authentication.ExpiringTokenAuthentication',
+    )
+}
 
 DATA_UPLOAD_MAX_MEMORY_SIZE = 10485760

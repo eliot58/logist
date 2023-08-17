@@ -10,16 +10,12 @@ from rest_framework.status import (
     HTTP_403_FORBIDDEN
 )
 from rest_framework.response import Response
-
+from rest_framework import views
 
 from .serializers import *
 
-
-from .authentication import *
-
-from rest_framework import generics, views
 from django.db.models import Q
-from django.db.utils import IntegrityError
+from .authentication import *
 
 @api_view(["POST"])
 @permission_classes((AllowAny,))
@@ -30,7 +26,7 @@ def signin(request):
 
 
     user = authenticate(
-        username = serializer.data['email'],
+        username = serializer.data['login'],
         password = serializer.data['password'] 
     )
     if not user:
@@ -40,11 +36,8 @@ def signin(request):
     token, _ = Token.objects.get_or_create(user = user)
 
     return Response({
-        'token': token.key,
-        'spec': user.profile.spec
+        'token': token.key
     }, status=HTTP_200_OK)
-
-
 
 
 @api_view(["DELETE"])
@@ -52,3 +45,20 @@ def token_destroyed(request):
     request.user.auth_token.delete()
     logout(request)
     return Response({'detail': 'Success logout'}, status=HTTP_200_OK)
+
+
+class RouteView(views.APIView):
+    def get(self, request):
+        try:
+            serializer = RouteSerializer(Route.objects.get(Q(driver_id=request.user.driver.id) & Q(is_finish=False)))
+        except Route.DoesNotExist:
+            return Response({'error': 'Route does not exist'}, status=HTTP_404_NOT_FOUND)
+        return Response(serializer.data)
+    
+class OrderView(views.APIView):
+    def get(self, request):
+        try:
+            serializer = OrderSerializer(Order.objects.get(o_name=request.query_params.get('o_name')))
+        except Order.DoesNotExist:
+            return Response({'error': 'Order does not exist'}, status=HTTP_404_NOT_FOUND)
+        return Response(serializer.data)

@@ -68,7 +68,6 @@
                     <table class="result__table">
                         <tr class="result__table-head">
                             <th>ID</th>
-                            <th>Название</th>
                             <th>Водитель</th>
                             <th>Статус</th>
                             <th>Количество заказов</th>
@@ -77,9 +76,8 @@
                         {% for route in routes %}
                         <tr class="result__table-body">
                             <td>{{ route.id }}</td>
-                            <td>{{ route.name }}</td>
                             <td>{{ route.driver.name }}</td>
-                            <td>{{ route.is_done }}</td>
+                            <td>{{ route.is_finish }}</td>
                             <td>{{ route.orders.all|length }}</td>
                             <td>
                                 <a href="{% url 'route' route.id %}" class="response">Подробно</a>
