@@ -46,6 +46,22 @@ def token_destroyed(request):
     logout(request)
     return Response({'detail': 'Success logout'}, status=HTTP_200_OK)
 
+@api_view(["POST"])
+def order_reponse(request, id):
+    order = Order.objects.get(id = id)
+    order.response = request.FILES["file"]
+    order.save()
+    route = Route.objects.get(Q(driver_id=request.user.driver.id) & Q(is_finish=False))
+    c = 0
+    for order in route.orders.all():
+        if order.response != "":
+            c += 1
+
+    if c == len(route.orders.all()):
+        route.is_finish = True
+        route.save()
+    return Response({'detail': 'Success'}, status=HTTP_200_OK)
+
 
 class RouteView(views.APIView):
     def get(self, request):
@@ -53,12 +69,4 @@ class RouteView(views.APIView):
             serializer = RouteSerializer(Route.objects.get(Q(driver_id=request.user.driver.id) & Q(is_finish=False)))
         except Route.DoesNotExist:
             return Response({'error': 'Route does not exist'}, status=HTTP_404_NOT_FOUND)
-        return Response(serializer.data)
-    
-class OrderView(views.APIView):
-    def get(self, request):
-        try:
-            serializer = OrderSerializer(Order.objects.get(o_name=request.query_params.get('o_name')))
-        except Order.DoesNotExist:
-            return Response({'error': 'Order does not exist'}, status=HTTP_404_NOT_FOUND)
         return Response(serializer.data)
