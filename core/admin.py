@@ -1,5 +1,6 @@
 from django.contrib import admin
 from .models import *
+from django.contrib.admin.models import LogEntry
 
 
 @admin.register(Driver)
@@ -27,3 +28,7 @@ class RouteAdmin(admin.ModelAdmin):
     @admin.display(ordering='user__name', description='Водитель')
     def driver_name(self, obj):
         return obj.driver.name
+    
+@admin.register(LogEntry)
+class LogAdmin(admin.ModelAdmin):
+    list_display = ['action_time', 'user', 'content_type', 'object_repr', '__str__']
