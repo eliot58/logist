@@ -28,6 +28,7 @@ class Logist(models.Model):
 
     def __str__(self):
         return self.fullName
+    
 
 class Order(models.Model):
     o_name = models.CharField(max_length=100, null=True, blank=True, unique=True)
@@ -42,8 +43,8 @@ class Order(models.Model):
     floor = models.CharField(max_length=100)
     c_name = models.CharField(max_length=100)
     s_name = models.CharField(max_length=100)
-    pos = models.CharField(max_length=60)   
-    response = models.FileField(upload_to="response", null=True, blank=True)
+    pos = models.CharField(max_length=60)
+    response = models.BooleanField(default=False)
 
     class Meta:
         verbose_name = 'Заказ'
@@ -51,6 +52,10 @@ class Order(models.Model):
 
     def __str__(self):
         return self.o_name
+    
+class FileModel(models.Model):
+    order = models.ForeignKey(Order, on_delete=models.CASCADE)
+    file = models.FileField(upload_to="response/")
 
 class Route(models.Model):
     author = models.ForeignKey(Logist, on_delete=models.CASCADE, verbose_name="Логист")

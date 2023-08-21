@@ -48,13 +48,12 @@ def token_destroyed(request):
 
 @api_view(["POST"])
 def order_reponse(request, id):
-    order = Order.objects.get(id = id)
-    order.response = request.FILES["file"]
-    order.save()
+    for file in request.FILES.getlist("files"):
+        FileModel.objects.create(order_id=id, file = file)
     route = Route.objects.get(Q(driver_id=request.user.driver.id) & Q(is_finish=False))
     c = 0
     for order in route.orders.all():
-        if order.response != "":
+        if order.response:
             c += 1
 
     if c == len(route.orders.all()):
