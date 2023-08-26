@@ -51,20 +51,22 @@ def order_reponse(request, id):
     for file in request.FILES.getlist("files"):
         FileModel.objects.create(order_id=id, file = file)
     route = Route.objects.get(Q(driver_id=request.user.driver.id) & Q(is_finish=False))
+    order = Order.objects.get(id=id)
+    order.response = True
+    order.save()
     c = 0
     for order in route.orders.all():
         if order.response:
             c += 1
+
+
+    print(c, len(route.orders.all()))
 
     if c == len(route.orders.all()):
         route.is_finish = True
         route.save()
         request.user.driver.is_free = True
         request.user.driver.save()
-
-    order = Order.objects.get(id=id)
-    order.response = True
-    order.save()
 
 
     return Response({'detail': 'Success'}, status=HTTP_200_OK)

@@ -60,7 +60,7 @@ class FileModel(models.Model):
 class Route(models.Model):
     author = models.ForeignKey(Logist, on_delete=models.CASCADE, verbose_name="Логист")
     driver = models.ForeignKey(Driver, on_delete=models.CASCADE, verbose_name="Водитель")
-    route_link = models.URLField()
+    route_link = models.URLField(max_length=1000)
     orders = models.ManyToManyField(Order)
     is_finish = models.BooleanField(default=False)
 
