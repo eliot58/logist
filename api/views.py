@@ -59,10 +59,14 @@ def order_reponse(request, id):
     if c == len(route.orders.all()):
         route.is_finish = True
         route.save()
+        request.user.driver.is_free = True
+        request.user.driver.save()
 
     order = Order.objects.get(id=id)
     order.response = True
     order.save()
+
+
     return Response({'detail': 'Success'}, status=HTTP_200_OK)
 
 
