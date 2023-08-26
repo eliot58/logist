@@ -12,8 +12,14 @@ class LogistAdmin(admin.ModelAdmin):
     list_display = ['fullName', 'phone_number']
 
 
+class FileInline(admin.StackedInline):
+    model = FileModel
+    extra = 1
+
+
 @admin.register(Order)
 class OrderAdmin(admin.ModelAdmin):
+    inlines = [FileInline]
     list_display = ['o_name', 'plan_date', 'date_logist', 'qu', 'sqr', 'address', 'floor', 'c_name', 's_name']
 
 @admin.register(Route)
