@@ -16,6 +16,10 @@ class FileInline(admin.StackedInline):
     model = FileModel
     extra = 1
 
+@admin.register(FileModel)
+class OrderAdmin(admin.ModelAdmin):
+    list_display = ['order', 'file']
+
 
 @admin.register(Order)
 class OrderAdmin(admin.ModelAdmin):
