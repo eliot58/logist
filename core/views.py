@@ -76,8 +76,12 @@ def index(request):
         filtered = list(filter(lambda item: item["s_name"] == 'Завершен', orders))
     else:
         filtered = orders
+        
+    orders = sorted(filtered, key=lambda item: item["plan_date"] if item["plan_date"] != None else "", reverse=True)
+    
 
-    return render(request, 'orders.html', {"orders": filtered, "drivers": Driver.objects.filter(is_free=True)})
+
+    return render(request, 'orders.html', {"orders": orders, "drivers": Driver.objects.filter(is_free=True)})
 
 
 

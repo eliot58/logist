@@ -86,7 +86,7 @@
 
         <div class="popup-info popup-fade" id="send__modal">
             <div class="cart-popup" style="width: 1200px;">
-                <img src="{% static 'assets/img/ico/delete.svg' %}" style="position: absolute; top: 10px; right: 10px; padding: 5px;" onclick="this.parentNode.parentNode.style.display = 'none'; location.reload()" alt="">
+                <img src="{% static 'assets/img/ico/delete.svg' %}" style="position: absolute; top: 10px; right: 10px; padding: 5px;" onclick="this.parentNode.parentNode.style.display = 'none';" alt="">
                 <table class="result__table popup_table">
                     <tr class="result__table-head popup_table">
                         <th>№</th>
@@ -146,17 +146,20 @@
                         </div>
                     </div>
                 </div>
-                <select id="filter" style="margin-left: 60px;margin-right: 20px; border: 1px solid #00ff80;box-shadow: 0px 4px 50px rgba(0, 0, 0, 0.05);border-radius: 15px;padding: 10px 60px;" onchange="window.location.href = `?filter=${this.value}`">
+                <select id="filter" style="margin-left: 60px;margin-right: 5px; border: 1px solid #00ff80;box-shadow: 0px 4px 50px rgba(0, 0, 0, 0.05);border-radius: 15px;padding: 10px 60px;" onchange="window.location.href = `?filter=${this.value}`">
                     <option value="all" selected>Все</option>
                     <option value="work">В производстве</option>
                     <option value="sklad">На складе</option>
                     <option value="loaded">Отгружен</option>
                     <option value="finish">Завершен</option>
                 </select>
+                <select id="filter" style="margin-left: 10px;margin-right: 20px; border: 1px solid #00ff80;box-shadow: 0px 4px 50px rgba(0, 0, 0, 0.05);border-radius: 15px;padding: 10px 60px;" onchange="if (this.value == 'date'){location.reload()} else {sortTableByDate()}">
+                    <option value="date" selected>По дате</option>
+                    <option value="date_logist">По дате логиста</option>
+                </select>
                 <button type="button" style="background: #00ff80;border-radius: 15px;border: none;padding: 10px 60px;font-size: 16px;font-weight: 700; margin-top: 10px;" onclick="window.location.href = '?reload=1'">Обновить</button>
-                <!-- <button type="button" style="background: #00ff80;border-radius: 15px;border: none;padding: 10px 60px;font-size: 16px;font-weight: 700; margin-top: 10px;" onclick="addAll()">Добавить все</button> -->
                 <div class="process__work table-responsive">
-                    <table class="result__table">
+                    <table class="result__table main-table">
                         <tr class="result__table-head">
                             <th>№</th>
                             <th>Дата</th>
@@ -220,7 +223,7 @@
                             <td id="s_name">{{order.s_name}}</td>
                             <td>
                                 <button type="button"
-                                    onclick="createRoute('{{order.o_name}}', this.parentNode.parentNode.getElementsByTagName('td')[0].textContent, this.parentNode.parentNode.getElementsByTagName('td')[1].textContent, this.parentNode.parentNode.getElementsByTagName('td')[2].getElementsByTagName('input')[0].value, this.parentNode.parentNode.getElementsByTagName('td')[3].textContent, this.parentNode.parentNode.getElementsByTagName('td')[4].textContent, this.parentNode.previousElementSibling.previousElementSibling.previousElementSibling.previousElementSibling.previousElementSibling.textContent, '{{order.contact}}', this.parentNode.previousElementSibling.previousElementSibling.textContent, '{{order.phone}}', this.parentNode.previousElementSibling.previousElementSibling.previousElementSibling.textContent, '{{order.c_name}}', '{{order.s_name}}'); this.style.backgroundColor = 'red'; this.textContent = 'Добавлено'"
+                                    onclick="if (this.textContent == 'Добавлено') {removeRouteByName(this.parentNode.parentNode.getElementsByTagName('td')[0].textContent); this.style.backgroundColor = '#15ce73'; this.textContent = 'Добавить'; return} createRoute('{{order.o_name}}', this.parentNode.parentNode.getElementsByTagName('td')[0].textContent, this.parentNode.parentNode.getElementsByTagName('td')[1].textContent, this.parentNode.parentNode.getElementsByTagName('td')[2].getElementsByTagName('input')[0].value, this.parentNode.parentNode.getElementsByTagName('td')[3].textContent, this.parentNode.parentNode.getElementsByTagName('td')[4].textContent, this.parentNode.previousElementSibling.previousElementSibling.previousElementSibling.previousElementSibling.previousElementSibling.textContent, '{{order.contact}}', this.parentNode.previousElementSibling.previousElementSibling.textContent, '{{order.phone}}', this.parentNode.previousElementSibling.previousElementSibling.previousElementSibling.textContent, '{{order.c_name}}', '{{order.s_name}}'); this.style.backgroundColor = 'red'; this.textContent = 'Добавлено'"
                                     class="response">Добавить</button>
                             </td>
                         </tr>
@@ -379,12 +382,7 @@
                                 <td style="max-width: 200px;">${orders[i]["transportinfo"]=='None' ? '' : orders[i]["transportinfo"]}</td>
                                 <td>${orders[i]["floor"]=='None' ? '' : orders[i]["floor"]}</td>
                                 <td style="max-width: 200px;">${orders[i]["address"]}</td>
-                                <td>${orders[i]["s_name"]}</td>
-                                <td>
-                                    <button type="button"
-                                        onclick="removeRoute('${i}'); this.parentNode.parentNode.remove()"
-                                        class="response">Удалить</button>
-                                </td>`
+                                <td>${orders[i]["s_name"]}</td>`
 
                 tr.addEventListener("dragstart", function(event) {
                     draggedItem = this;
@@ -409,9 +407,14 @@
             document.querySelector('.popup-info').style.display = 'block';
         }
 
-        function removeRoute(key){
+        function removeRouteByName(o_name){
             orders = JSON.parse(localStorage.getItem("orders"))
-            orders.splice(Number(key), 1);
+            for (let i = 0; i < orders.length; i++){
+                if (orders[i]["o_name"] == o_name){
+                    orders.splice(i, 1);
+                    break
+                }
+            }
             localStorage.setItem("orders", JSON.stringify(orders))
         }
 
@@ -469,6 +472,34 @@
             location.reload()
 
 
+        }
+
+        function sortTableByDate() {
+            var table, rows, switching, i, x, y, shouldSwitch;
+            table = document.querySelector(".result__table.main-table");
+
+            switching = true
+
+            while (switching) {
+                switching = false;
+                rows = table.querySelectorAll(".result__table-body");
+
+                for (i = 0; i < rows.length - 1; i++) {
+                    shouldSwitch = false;
+                    x = rows[i].querySelector("td:nth-child(3) input").value;
+                    y = rows[i + 1].querySelector("td:nth-child(3) input").value;
+
+                    if (x < y) {
+                        shouldSwitch = true;
+                        break;
+                    }
+                }
+
+                if (shouldSwitch) {
+                    rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+                    switching = true;
+                }
+            }
         }
 
         // async function addAll(){
