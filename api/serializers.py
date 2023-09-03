@@ -30,3 +30,8 @@ class RouteSerializer(serializers.ModelSerializer):
     class Meta:
         model = Route
         fields = ["author", "driver", "route_link", "orders"]
+
+
+class LocationSerializer(serializers.Serializer):
+    longitude = serializers.FloatField()
+    latitude = serializers.FloatField()

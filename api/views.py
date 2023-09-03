@@ -71,8 +71,12 @@ def order_reponse(request, id):
 
 @api_view(["POST"])
 def set_location(request):
+    serializer = LocationSerializer(data = request.data)
+    if not serializer.is_valid():
+        return Response(serializer.errors, status = HTTP_400_BAD_REQUEST)
+    
     d = request.user.driver
-    d.last_pos = f"{request.data['longitude']} {request.data['latitude']}"
+    d.last_pos = f"{serializer.data['longitude']} {serializer.data['latitude']}"
     d.last_post_date_time = datetime.now()
     d.save()
     return Response({'detail': 'Success'}, status=HTTP_200_OK)
