@@ -5,9 +5,7 @@ from rest_framework.permissions import AllowAny
 from rest_framework.status import (
     HTTP_400_BAD_REQUEST,
     HTTP_404_NOT_FOUND,
-    HTTP_200_OK,
-    HTTP_201_CREATED,
-    HTTP_403_FORBIDDEN
+    HTTP_200_OK
 )
 from rest_framework.response import Response
 from rest_framework import views
@@ -16,6 +14,8 @@ from .serializers import *
 
 from django.db.models import Q
 from .authentication import *
+
+from datetime import datetime
 
 @api_view(["POST"])
 @permission_classes((AllowAny,))
@@ -60,15 +60,21 @@ def order_reponse(request, id):
             c += 1
 
 
-    print(c, len(route.orders.all()))
-
     if c == len(route.orders.all()):
         route.is_finish = True
         route.save()
         request.user.driver.is_free = True
         request.user.driver.save()
 
+    return Response({'detail': 'Success'}, status=HTTP_200_OK)
 
+
+@api_view(["POST"])
+def set_location(request):
+    d = request.user.driver
+    d.last_pos = f"{request.data['longitude']} {request.data['latitude']}"
+    d.last_post_date_time = datetime.now()
+    d.save()
     return Response({'detail': 'Success'}, status=HTTP_200_OK)
 
 
