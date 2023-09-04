@@ -76,7 +76,7 @@ def set_location(request):
         return Response(serializer.errors, status = HTTP_400_BAD_REQUEST)
     
     d = request.user.driver
-    d.last_pos = f"{serializer.data['longitude']} {serializer.data['latitude']}"
+    d.last_pos = f"{serializer.data['latitude']} {serializer.data['longitude']}"
     d.last_post_date_time = datetime.now()
     d.save()
     return Response({'detail': 'Success'}, status=HTTP_200_OK)
