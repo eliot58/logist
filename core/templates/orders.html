@@ -103,43 +103,41 @@
             </div>
         </div>
         <section class="balance__company row">
-            <div class="profile__navbar col-xl-2">
-                <div class="navbar__content">
-                    <div class="navbar__brand">
-                        <img src="{% static 'assets/img/logo_petr.png' %}" alt="Petr">
-                    </div>
-                    <p class="nav__diler-menu">меню</p>
-                    <div class="navbar__links">
-                        <nav>
-                            <ul>
-                                <li class="nav__link-diler-item nav__link-item-diler-active"><img
-                                        src="{% static 'assets/img/ico/order-active.svg' %}" alt="Мои заказы"><a
-                                        href="">Заказы</a></li>
-                                <li class="nav__link-diler-item "><img
-                                        src="{% static 'assets/img/ico/gps-inactive.svg' %}" alt="Маршруты"><a
-                                        href="{% url 'routes' %}">Маршруты</a></li>
-                                <li class="nav__link-diler-item"><img src="{% static 'assets/img/ico/support.svg' %}"
-                                        alt="Помощь"><a
-                                        href="https://t.me/chattodotodo_bot?start=IGS-6Nn-twD17M6tfFgpg">Помощь</a>
-                                </li>
-                                <hr class="nav__link-diler">
-                                <!-- <button type="button" onclick="window.location.pathname = 'new_route'"
-                                    class="main__btn d-flex justify-content-center align-items-center mx-auto new__order"><img
-                                        class="px-1" src="{% static 'assets/img/ico/add.svg' %}" alt="add">Создать
-                                    маршрут</button> -->
-                                <li class="logout nav__link-item "><img src="{% static 'assets/img/ico/logout.svg' %}"
-                                        alt="Выход"><a href="{% url 'logout_core_view' %}"> Выход</a></li>
-                            </ul>
-                        </nav>
-                    </div>
-                </div>
-            </div>
-            <div class="profile__content col-xl-10">
+            
+            <div class="d-flex flex-column flex-shrink-0 bg-body-tertiary" style="width: 4.5rem;">
+                <a href="/" class="d-block p-3 link-body-emphasis text-decoration-none" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-original-title="Icon-only">
+                    <img src="{% static 'assets/img/logo_petr.png' %}" alt="">
+                  <span class="visually-hidden">Icon-only</span>
+                </a>
+                <ul class="nav nav-pills nav-flush flex-column mb-auto text-center">
+                  <li class="nav-item">
+                    <a href="" class="nav-link py-3 border-bottom rounded-0" data-bs-toggle="tooltip" data-bs-placement="right" aria-label="Home" data-bs-original-title="Home">
+                        <img src="{% static 'assets/img/ico/order-active.svg' %}" alt="Мои заказы">
+                    </a>
+                  </li>
+                  <li>
+                    <a href="{% url 'routes' %}" class="nav-link py-3 border-bottom rounded-0" data-bs-toggle="tooltip" data-bs-placement="right" aria-label="Dashboard" data-bs-original-title="Dashboard">
+                        <img src="{% static 'assets/img/ico/gps-inactive.svg' %}" alt="Маршруты">
+                    </a>
+                  </li>
+                  <li>
+                    <a href="https://t.me/chattodotodo_bot?start=IGS-6Nn-twD17M6tfFgpg" class="nav-link py-3 border-bottom rounded-0" data-bs-toggle="tooltip" data-bs-placement="right" aria-label="Orders" data-bs-original-title="Orders">
+                        <img src="{% static 'assets/img/ico/support.svg' %}" alt="Помощь">
+                    </a>
+                  </li>
+                  <li>
+                    <a href="{% url 'logout_core_view' %}" class="nav-link py-3 border-bottom rounded-0" data-bs-toggle="tooltip" data-bs-placement="right" aria-label="Products" data-bs-original-title="Products">
+                        <img src="{% static 'assets/img/ico/logout.svg' %}" alt="Выход">
+                    </a>
+                  </li>
+                </ul>
+              </div>
+            <div class="profile__content col-xl-11">
                 <div class="profile__nav row">
-                    <div class="profile__nav-title col-xl-10">
+                    <div class="profile__nav-title col-xl-11">
                         <h1>Заказы</h1>
                     </div>
-                    <div class="profile__nav-logo col-xl-2 d-flex align-items-center">
+                    <div class="profile__nav-logo col-xl-1 d-flex align-items-center">
                         <div class="profile__nav-wrapper d-flex align-items-center">
                             <img src="{% static 'assets/img/ico/profile-logo-diler.svg' %}" alt="logo">
                             <p class="profile__nav-logo-title">{{ request.user.username }}</p>
@@ -169,6 +167,10 @@
                             <th>Комментарий</th>
                             <th>Клиент</th>
                             <th>Этаж</th>
+                            <th>Расчетчик</th>
+                            <th>Менеджер</th>
+                            <th>Время</th>
+                            <th>Сумма доставки</th>
                             <th>Адрес</th>
                             <th>Статус</th>
                             <th></th>
@@ -219,11 +221,27 @@
                             {% else %}
                                 <td id="floor"></td>
                             {% endif %}
+                            {% if order.people3 %}
+                                <td id="people3">{{order.people3}}</td>
+                            {% else %}
+                                <td id="people3"></td>
+                            {% endif %}
+                            {% if order.people %}
+                                <td id="people">{{order.people}}</td>
+                            {% else %}
+                                <td id="people"></td>
+                            {% endif %}
+                            {% if order.deliverytime %}
+                                <td id="deliverytime">{{order.deliverytime}}</td>
+                            {% else %}
+                                <td id="deliverytime"></td>
+                            {% endif %}
+                            <td id="sm_delivery">{{order.sm_delivery}}</td>
                             <td id="address" style="max-width: 200px;" contenteditable="true">{{order.address}}</td>
                             <td id="s_name">{{order.s_name}}</td>
                             <td>
                                 <button type="button"
-                                    onclick="if (this.textContent == 'Добавлено') {removeRouteByName(this.parentNode.parentNode.getElementsByTagName('td')[0].textContent); this.style.backgroundColor = '#15ce73'; this.textContent = 'Добавить'; return} createRoute('{{order.o_name}}', this.parentNode.parentNode.getElementsByTagName('td')[0].textContent, this.parentNode.parentNode.getElementsByTagName('td')[1].textContent, this.parentNode.parentNode.getElementsByTagName('td')[2].getElementsByTagName('input')[0].value, this.parentNode.parentNode.getElementsByTagName('td')[3].textContent, this.parentNode.parentNode.getElementsByTagName('td')[4].textContent, this.parentNode.previousElementSibling.previousElementSibling.previousElementSibling.previousElementSibling.previousElementSibling.textContent, '{{order.contact}}', this.parentNode.previousElementSibling.previousElementSibling.textContent, '{{order.phone}}', this.parentNode.previousElementSibling.previousElementSibling.previousElementSibling.textContent, '{{order.c_name}}', '{{order.s_name}}'); this.style.backgroundColor = 'red'; this.textContent = 'Добавлено'"
+                                    onclick="if (this.textContent == 'Добавлено') {removeRouteByName(this.parentNode.parentNode.getElementsByTagName('td')[0].textContent); this.style.backgroundColor = '#15ce73'; this.textContent = 'Добавить'; return} createRoute(this, '{{order.o_name}}', this.parentNode.parentNode.getElementsByTagName('td')[0].textContent, this.parentNode.parentNode.getElementsByTagName('td')[1].textContent, this.parentNode.parentNode.getElementsByTagName('td')[2].getElementsByTagName('input')[0].value, this.parentNode.parentNode.getElementsByTagName('td')[3].textContent, this.parentNode.parentNode.getElementsByTagName('td')[4].textContent, this.parentNode.previousElementSibling.previousElementSibling.previousElementSibling.previousElementSibling.previousElementSibling.textContent, '{{order.contact}}', this.parentNode.previousElementSibling.previousElementSibling.textContent, '{{order.phone}}', this.parentNode.previousElementSibling.previousElementSibling.previousElementSibling.textContent, this.parentNode.parentNode.getElementsByTagName('td')[9].textContent, this.parentNode.parentNode.getElementsByTagName('td')[10].textContent, this.parentNode.parentNode.getElementsByTagName('td')[11].textContent, this.parentNode.parentNode.getElementsByTagName('td')[12].textContent, '{{order.c_name}}', '{{order.s_name}}');"
                                     class="response">Добавить</button>
                             </td>
                         </tr>
@@ -239,7 +257,7 @@
     <a href="#" onclick="return false;">
         <span class="info-button" onclick="renderTable()"></span>
     </a>
-    <div id="snackbar">Добавлено</div>
+    <div id="snackbar">Не удалось добавить</div>
     <script src="https://code.jquery.com/jquery-3.6.1.min.js"></script>
     <script src="{% static 'assets/js/script.js' %}"></script>
     <script>
@@ -340,26 +358,34 @@
         }
 
 
-        async function createRoute(order_name, o_name, plan_date, date_logist, qu, sqr, transportinfo, contact, address, phone, floor, c_name, s_name) {
-            orders = localStorage.getItem("orders")
-            if (orders == null) {
-                orders = []
-            } else {
-                orders = JSON.parse(orders)
+        async function createRoute(el, order_name, o_name, plan_date, date_logist, qu, sqr, transportinfo, contact, address, phone, floor, people3, people, deliverytime, sm_delivery, c_name, s_name) {
+
+            try {
+                orders = localStorage.getItem("orders")
+                if (orders == null) {
+                    orders = []
+                } else {
+                    orders = JSON.parse(orders)
+                }
+                let response = await fetch(`https://geocode-maps.yandex.ru/1.x/?apikey=52427b0d-4b85-4b1a-828b-ad4cf6903c9f&geocode=${address}&format=json`);
+
+                let data = await response.json();
+
+                orders.push({"o_name": o_name, "plan_date": plan_date, "date_logist": date_logist, "qu": qu, "sqr": sqr, "transportinfo": transportinfo, "contact": contact, "address": address, "phone": phone, "floor": floor, "people3": people3, "people": people, "deliverytime": deliverytime, "sm_delivery": sm_delivery, "c_name": c_name, "s_name": s_name, "pos": data.response.GeoObjectCollection.featureMember[0].GeoObject.Point.pos})
+
+                localStorage.setItem("orders", JSON.stringify(orders))
+
+                el.style.backgroundColor = 'red';
+
+                el.textContent = 'Добавлено'
+
+            } catch (err) {
+                var x = document.getElementById("snackbar")
+
+                x.className = "show";
+
+                setTimeout(function(){ x.className = x.className.replace("show", ""); }, 5000);
             }
-            let response = await fetch(`https://geocode-maps.yandex.ru/1.x/?apikey=52427b0d-4b85-4b1a-828b-ad4cf6903c9f&geocode=${address}&format=json`);
-
-            let data = await response.json();
-
-            orders.push({"o_name": o_name, "plan_date": plan_date, "date_logist": date_logist, "qu": qu, "sqr": sqr, "transportinfo": transportinfo, "contact": contact, "address": address, "phone": phone, "floor": floor, "c_name": c_name, "s_name": s_name, "pos": data.response.GeoObjectCollection.featureMember[0].GeoObject.Point.pos})
-
-            localStorage.setItem("orders", JSON.stringify(orders))
-
-            var x = document.getElementById("snackbar")
-
-            x.className = "show";
-
-            setTimeout(function(){ x.className = x.className.replace("show", ""); }, 3000);
             
         }
 

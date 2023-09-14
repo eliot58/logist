@@ -894,7 +894,7 @@ html {
 .process__work {
   margin: 40px 50px;
   box-shadow: 0px 4px 54px 0px rgba(0, 0, 0, 0.1176470588);
-  width: 90%;
+  width: 100%;
   padding: 24px 40px;
   border-radius: 12px;
 }

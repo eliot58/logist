@@ -8,7 +8,7 @@ import json
 import redis
 from django.views.decorators.http import require_POST
 from django.views.decorators.csrf import csrf_exempt
-from django.http import JsonResponse
+from django.http import HttpResponseForbidden, JsonResponse
 
 
 def login_view(request):
@@ -106,3 +106,13 @@ def create_route(request):
 @login_required(login_url='/login/')
 def route(request, id):
     return render(request, 'route.html', {"route": Route.objects.get(id=id)})
+
+
+@login_required(login_url='/login/')
+def route_delete(request, id):
+    r = Route.objects.get(id=id)
+    if request.user.logist.id == r.author_id:
+        r.delete()
+        return redirect(routes)
+    else:
+        return HttpResponseForbidden()

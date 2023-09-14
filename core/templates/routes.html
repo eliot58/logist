@@ -22,41 +22,40 @@
             </div>
         </div>
         <section class="balance__company row">
-            <div class="profile__navbar col-xl-2">
-                <div class="navbar__content">
-                    <div class="navbar__brand">
-                        <img src="{% static 'assets/img/logo_petr.png' %}" alt="Petr">
-                    </div>
-                    <p class="nav__diler-menu">меню</p>
-                    <div class="navbar__links">
-                        <nav>
-                            <ul>
-                                <li class="nav__link-diler-item"><img
-                                        src="{% static 'assets/img/ico/my-orders.svg' %}" alt="Мои заказы"><a
-                                        href="{% url 'index' %}">Заказы</a></li>
-                                <li class="nav__link-diler-item nav__link-item-diler-active"><img src="{% static 'assets/img/ico/gps.svg' %}"
-                                        alt="Маршруты"><a href="{% url 'routes' %}">Маршруты</a></li>
-                                <li class="nav__link-diler-item"><img src="{% static 'assets/img/ico/support.svg' %}"
-                                        alt="Помощь"><a
-                                        href="https://t.me/chattodotodo_bot?start=IGS-6Nn-twD17M6tfFgpg">Помощь</a>
-                                </li>
-                                <hr class="nav__link-diler">
-                                <!-- <button type="button" onclick="window.location.pathname = 'new_route'"
-                                    class="main__btn d-flex justify-content-center align-items-center mx-auto new__order"><img
-                                        class="px-1" src="{% static 'assets/img/ico/add.svg' %}" alt="add">Создать маршрут</button> -->
-                                <li class="logout nav__link-item "><img src="{% static 'assets/img/ico/logout.svg' %}"
-                                        alt="Выход"><a href="{% url 'logout_core_view' %}"> Выход</a></li>
-                            </ul>
-                        </nav>
-                    </div>
-                </div>
-            </div>
-            <div class="profile__content col-xl-10">
+            <div class="d-flex flex-column flex-shrink-0 bg-body-tertiary" style="width: 4.5rem;">
+                <a href="/" class="d-block p-3 link-body-emphasis text-decoration-none" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-original-title="Icon-only">
+                    <img src="{% static 'assets/img/logo_petr.png' %}" alt="">
+                  <span class="visually-hidden">Icon-only</span>
+                </a>
+                <ul class="nav nav-pills nav-flush flex-column mb-auto text-center">
+                  <li class="nav-item">
+                    <a href="{% url 'index' %}" class="nav-link py-3 border-bottom rounded-0" data-bs-toggle="tooltip" data-bs-placement="right" aria-label="Home" data-bs-original-title="Home">
+                        <img src="{% static 'assets/img/ico/my-orders.svg' %}" alt="Мои заказы">
+                    </a>
+                  </li>
+                  <li>
+                    <a href="{% url 'routes' %}" class="nav-link py-3 border-bottom rounded-0" data-bs-toggle="tooltip" data-bs-placement="right" aria-label="Dashboard" data-bs-original-title="Dashboard">
+                        <img src="{% static 'assets/img/ico/gps.svg' %}" alt="Маршруты">
+                    </a>
+                  </li>
+                  <li>
+                    <a href="https://t.me/chattodotodo_bot?start=IGS-6Nn-twD17M6tfFgpg" class="nav-link py-3 border-bottom rounded-0" data-bs-toggle="tooltip" data-bs-placement="right" aria-label="Orders" data-bs-original-title="Orders">
+                        <img src="{% static 'assets/img/ico/support.svg' %}" alt="Помощь">
+                    </a>
+                  </li>
+                  <li>
+                    <a href="{% url 'logout_core_view' %}" class="nav-link py-3 border-bottom rounded-0" data-bs-toggle="tooltip" data-bs-placement="right" aria-label="Products" data-bs-original-title="Products">
+                        <img src="{% static 'assets/img/ico/logout.svg' %}" alt="Выход">
+                    </a>
+                  </li>
+                </ul>
+              </div>
+            <div class="profile__content col-xl-11">
                 <div class="profile__nav row">
-                    <div class="profile__nav-title col-xl-10">
+                    <div class="profile__nav-title col-xl-11">
                         <h1>Маршруты</h1>
                     </div>
-                    <div class="profile__nav-logo col-xl-2 d-flex align-items-center">
+                    <div class="profile__nav-logo col-xl-1 d-flex align-items-center">
                         <div class="profile__nav-wrapper d-flex align-items-center">
                             <img src="{% static 'assets/img/ico/profile-logo-diler.svg' %}" alt="logo">
                             <p class="profile__nav-logo-title">{{ request.user.username }}</p>
@@ -81,6 +80,9 @@
                             <td>{{ route.orders.all|length }}</td>
                             <td>
                                 <a href="{% url 'route' route.id %}" class="response">Подробно</a>
+                            </td>
+                            <td>
+                                <a href="{% url 'route_delete' route.id %}"><img src="{% static 'assets/img/delete.svg' %}" alt=""></a>
                             </td>
                         </tr>
                         {% endfor %}
