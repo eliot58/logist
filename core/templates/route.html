@@ -74,6 +74,10 @@
                             <th>Комментарий</th>
                             <th>Контакт</th>
                             <th>Этаж</th>
+                            <th>Менеджер</th>
+                            <th>Расчетчик</th>
+                            <th>Время</th>
+                            <th>Сумма доставки</th>
                             <th>Клиент</th>
                             <th>Статус</th>
                         </tr>
@@ -98,6 +102,10 @@
                                 </div>
                             </td>
                             <td>{{order.floor}}</td>
+                            <td>{{order.manager}}</td>
+                            <td>{{order.calc_manager}}</td>
+                            <td>{{order.delivery_time}}</td>
+                            <td>{{order.delivery_sum}}</td>
                             <td>{{order.c_name}}</td>
                             <td>{{order.s_name}}</td>
                         </tr>
