@@ -43,7 +43,6 @@ class Order(models.Model):
     floor = models.CharField(max_length=256)
     c_name = models.CharField(max_length=256)
     s_name = models.CharField(max_length=256)
-    crew = models.CharField(max_length=256)
     manager = models.CharField(max_length=256)
     calc_manager = models.CharField(max_length=256)
     delivery_sum = models.CharField(max_length=256)

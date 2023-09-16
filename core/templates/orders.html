@@ -167,8 +167,8 @@
                             <th>Комментарий</th>
                             <th>Клиент</th>
                             <th>Этаж</th>
-                            <th>Расчетчик</th>
                             <th>Менеджер</th>
+                            <th>Расчетчик</th>
                             <th>Время</th>
                             <th>Сумма доставки</th>
                             <th>Адрес</th>
@@ -241,7 +241,7 @@
                             <td id="s_name">{{order.s_name}}</td>
                             <td>
                                 <button type="button"
-                                    onclick="if (this.textContent == 'Добавлено') {removeRouteByName(this.parentNode.parentNode.getElementsByTagName('td')[0].textContent); this.style.backgroundColor = '#15ce73'; this.textContent = 'Добавить'; return} createRoute(this, '{{order.o_name}}', this.parentNode.parentNode.getElementsByTagName('td')[0].textContent, this.parentNode.parentNode.getElementsByTagName('td')[1].textContent, this.parentNode.parentNode.getElementsByTagName('td')[2].getElementsByTagName('input')[0].value, this.parentNode.parentNode.getElementsByTagName('td')[3].textContent, this.parentNode.parentNode.getElementsByTagName('td')[4].textContent, this.parentNode.previousElementSibling.previousElementSibling.previousElementSibling.previousElementSibling.previousElementSibling.textContent, '{{order.contact}}', this.parentNode.previousElementSibling.previousElementSibling.textContent, '{{order.phone}}', this.parentNode.previousElementSibling.previousElementSibling.previousElementSibling.textContent, this.parentNode.parentNode.getElementsByTagName('td')[9].textContent, this.parentNode.parentNode.getElementsByTagName('td')[10].textContent, this.parentNode.parentNode.getElementsByTagName('td')[11].textContent, this.parentNode.parentNode.getElementsByTagName('td')[12].textContent, '{{order.c_name}}', '{{order.s_name}}');"
+                                    onclick="if (this.textContent == 'Добавлено') {removeRouteByName(this.parentNode.parentNode.getElementsByTagName('td')[0].textContent); this.style.backgroundColor = '#15ce73'; this.textContent = 'Добавить'; return} createRoute(this, '{{order.o_name}}', this.parentNode.parentNode.querySelector('#o_name').textContent, this.parentNode.parentNode.querySelector('#plan_date').textContent, this.parentNode.parentNode.querySelector('#date_logist').value, this.parentNode.parentNode.querySelector('#qu').textContent, this.parentNode.parentNode.querySelector('#sqr').textContent, this.parentNode.parentNode.querySelector('#transportinfo').textContent, '{{order.contact}}', this.parentNode.parentNode.querySelector('#address').textContent, '{{ order.phone }}', this.parentNode.parentNode.querySelector('#floor').textContent, this.parentNode.parentNode.querySelector('#people3').textContent, this.parentNode.parentNode.querySelector('#people').textContent, this.parentNode.parentNode.querySelector('#deliverytime').textContent, this.parentNode.parentNode.querySelector('#sm_delivery').textContent, '{{ order.c_name }}', '{{ order.s_name }}');"
                                     class="response">Добавить</button>
                             </td>
                         </tr>
