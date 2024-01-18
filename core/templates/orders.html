@@ -64,19 +64,6 @@
 
 <body>
     <div class="wrapper__provider">
-        <div class="popup-review" id="send__modal">
-            <div class="popup">
-                <img src="{% static 'assets/img/ico/delete.svg' %}" style="position: absolute; top: 10px; right: 10px; padding: 5px;" onclick="this.parentNode.parentNode.style.display = 'none'" alt="">
-                <h3>Выберите водителя</h3>
-                <select required name="driver" class="account__input">
-                    <option value="" disabled selected>Выберите водителя</option>
-                    {% for driver in drivers %}
-                        <option value="{{ driver.id }}">{{ driver.name }}</option>
-                    {% endfor %}
-                </select>
-                <button type="button" onclick="saveRoute()" id="next__modal" class="btn main__btn rating__btn">Создать маршрут</button>
-            </div>
-        </div>
 
         <div class="popup-cart popup-fade" id="send__modal">
             <div class="cart-popup" style="width: 1000px;">
@@ -99,7 +86,7 @@
                         <th></th>
                     </tr>
                 </table>
-                <button type="button" style="background: #00ff80;border-radius: 15px;border: none;padding: 10px 75px;font-size: 16px;font-weight: 700; margin-top: 10px;" onclick="this.parentNode.parentNode.style.display = 'none'; document.querySelector('.popup-review').style.display = 'block'">Выбрать водителя</button>
+                <button type="button" style="background: #00ff80;border-radius: 15px;border: none;padding: 10px 75px;font-size: 16px;font-weight: 700; margin-top: 10px;" onclick="saveRoute()">Созвон</button>
             </div>
         </div>
         <section class="balance__company row">
@@ -371,7 +358,7 @@
 
                 let data = await response.json();
 
-                orders.push({"o_name": o_name, "plan_date": plan_date, "date_logist": date_logist, "qu": qu, "sqr": sqr, "transportinfo": transportinfo, "contact": contact, "address": address, "phone": phone, "floor": floor, "people3": people3, "people": people, "deliverytime": deliverytime, "sm_delivery": sm_delivery, "c_name": c_name, "s_name": s_name, "pos": data.response.GeoObjectCollection.featureMember[0].GeoObject.Point.pos})
+                orders.push({"o_name": o_name, "plan_date": plan_date, "date_logist": date_logist, "qu": qu, "sqr": sqr, "transportinfo": transportinfo, "contact": contact, "address": address, "phone": phone, "floor": floor, "manager": people3, "calc_manager": people, "delivery_time": deliverytime, "delivery_sum": sm_delivery, "c_name": c_name, "s_name": s_name, "pos": data.response.GeoObjectCollection.featureMember[0].GeoObject.Point.pos})
 
                 localStorage.setItem("orders", JSON.stringify(orders))
 
@@ -476,8 +463,7 @@
 
             let data = {
                 orders: JSON.parse(localStorage.getItem("orders")),
-                route_link: `https://yandex.ru/maps/213/moscow/?ll=37.617700%2C55.755863&mode=routes&routes%5BactiveComparisonMode%5D=auto&rtext=${routes.join('~')}&rtt=comparison&ruri=~&utm_medium=mapframe&utm_source=maps&z=10`,
-                driver_id: document.getElementsByName("driver")[0].value
+                route_link: `https://yandex.ru/maps/213/moscow/?ll=37.617700%2C55.755863&mode=routes&routes%5BactiveComparisonMode%5D=auto&rtext=${routes.join('~')}&rtt=comparison&ruri=~&utm_medium=mapframe&utm_source=maps&z=10`
             };
 
             let response = await fetch('/create-route/', {
@@ -491,9 +477,6 @@
             let result = await response.json();
 
             localStorage.removeItem("orders")
-
-
-            document.querySelector('.popup-review').style.display = 'none';
 
             location.reload()
 

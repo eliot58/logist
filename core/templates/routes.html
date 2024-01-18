@@ -76,7 +76,7 @@
                         <tr class="result__table-body">
                             <td>{{ route.id }}</td>
                             <td>{{ route.driver.name }}</td>
-                            <td>{{ route.is_finish }}</td>
+                            <td>{% if route.is_finish %} Выполнен {% else %} {% if route.driver %} Выполняется {% else %} {% if route.is_call %} Идет прозвон {% else %} Нужно выбрать водителя {% endif %} {% endif %}{% endif %}</td>
                             <td>{{ route.orders.all|length }}</td>
                             <td>
                                 <a href="{% url 'route' route.id %}" class="response">Подробно</a>

@@ -21,6 +21,19 @@
                 <a id="close__modal" href="" class="btn main__btn rating__btn">Мой профиль</a>
             </div>
         </div>
+        <div class="popup-review" id="send__modal">
+            <div class="popup">
+                <img src="{% static 'assets/img/ico/delete.svg' %}" style="position: absolute; top: 10px; right: 10px; padding: 5px;" onclick="this.parentNode.parentNode.style.display = 'none'" alt="">
+                <h3>Выберите водителя</h3>
+                <select required name="driver" class="account__input">
+                    <option value="" disabled selected>Выберите водителя</option>
+                    {% for driver in drivers %}
+                        <option value="{{ driver.id }}">{{ driver.name }}</option>
+                    {% endfor %}
+                </select>
+                <button type="button" onclick="saveRoute()" id="next__modal" class="btn main__btn rating__btn">Создать маршрут</button>
+            </div>
+        </div>
         <section class="balance__company row">
             <div class="d-flex flex-column flex-shrink-0 bg-body-tertiary" style="width: 4.5rem;">
                 <a href="/" class="d-block p-3 link-body-emphasis text-decoration-none" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-original-title="Icon-only">
@@ -110,6 +123,24 @@
                             <td>{{order.s_name}}</td>
                         </tr>
                         {% endfor %}
+                        <tr class="result__table-body">
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td>
+                                <button type="button" onclick="document.querySelector('.popup-review').style.display = 'block'" style="background-color: #15CE73; padding: 8px 16px; border: none; border-radius: 8px; color: white;">Выбрать водителя</button>
+                            </td>
+                        </tr>
                     </table>
                 </div>
             </div>

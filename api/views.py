@@ -26,17 +26,17 @@ def signin(request):
 
 
     user = authenticate(
-        username = serializer.data['login'],
-        password = serializer.data['password'] 
+        username = serializer.data["login"],
+        password = serializer.data["password"] 
     )
     if not user:
-        return Response({'detail': 'Invalid Credentials or activate account'}, status=HTTP_404_NOT_FOUND)
+        return Response({"detail": "Invalid Credentials or activate account"}, status=HTTP_404_NOT_FOUND)
 
         
     token, _ = Token.objects.get_or_create(user = user)
 
     return Response({
-        'token': token.key
+        "token": token.key
     }, status=HTTP_200_OK)
 
 
@@ -44,7 +44,7 @@ def signin(request):
 def token_destroyed(request):
     request.user.auth_token.delete()
     logout(request)
-    return Response({'detail': 'Success logout'}, status=HTTP_200_OK)
+    return Response({"detail": "Success logout"}, status=HTTP_200_OK)
 
 @api_view(["POST"])
 def order_reponse(request, id):
@@ -66,7 +66,7 @@ def order_reponse(request, id):
         request.user.driver.is_free = True
         request.user.driver.save()
 
-    return Response({'detail': 'Success'}, status=HTTP_200_OK)
+    return Response({"detail": "Success"}, status=HTTP_200_OK)
 
 
 @api_view(["POST"])
@@ -79,7 +79,7 @@ def set_location(request):
     d.last_pos = f"{serializer.data['latitude']} {serializer.data['longitude']}"
     d.last_post_date_time = datetime.now()
     d.save()
-    return Response({'detail': 'Success'}, status=HTTP_200_OK)
+    return Response({"detail": "Success"}, status=HTTP_200_OK)
 
 
 class RouteView(views.APIView):
@@ -87,5 +87,5 @@ class RouteView(views.APIView):
         try:
             serializer = RouteSerializer(Route.objects.get(Q(driver_id=request.user.driver.id) & Q(is_finish=False)))
         except Route.DoesNotExist:
-            return Response({'error': 'Route does not exist'}, status=HTTP_404_NOT_FOUND)
+            return Response({"error": "Route does not exist"}, status=HTTP_404_NOT_FOUND)
         return Response(serializer.data)
