@@ -158,7 +158,7 @@ def call(self, id):
     route = Route.objects.get(id=id)
     for order in route.orders.all():
         text_to_wav("Здравствуйте это петровские окна у вас на завтра есть заказ можете принять если нет продиктуйте пожалуйста новую дату и время принятия")
-        sleep(3)
+        sleep(5)
         os.system(f'asterisk -rx "channel originate SIP/novofon/{order.phone} extension {order.phone}@novofon-out"')
         sleep(60)
 
@@ -174,6 +174,8 @@ def call(self, id):
             with path.open(mode = 'rb') as f:
                 order.call_audio = File(f, name = path.name)
             order.save()
+        else:
+            order.call_text = data["stats"][-1]["disposition"]
     route.is_call = False
     route.save()
     
