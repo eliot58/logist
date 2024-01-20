@@ -163,7 +163,7 @@ def call(self, id):
     for order in route.orders.all():
         text_to_gsm("Здравствуйте это петровские окна у вас на завтра есть заказ можете принять если нет продиктуйте пожалуйста новую дату и время принятия")
         sleep(5)
-        print(f'asterisk -rx "channel originate SIP/novofon/{order.phone} extension {order.phone}@novofon-out"')
+        print(f'asterisk -rx "channel originate SIP/novofon/{order.phone.strip()} extension {order.phone.strip()}@novofon-out"')
         os.system(f'asterisk -rx "channel originate SIP/novofon/{order.phone.strip()} extension {order.phone.strip()}@novofon-out"')
         sleep(60)
 
