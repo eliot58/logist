@@ -51,7 +51,7 @@ class Order(models.Model):
     delivery_time = models.CharField(max_length = 256, verbose_name = "Время")
     pos = models.CharField(max_length = 60, verbose_name = "Локация")
     call_status = models.CharField(max_length = 60, default = "no call", verbose_name = "Статус звонка")
-    call_audio = models.FileField(null = True, blank = True, verbose_name = "Результат созвона в аудио")
+    call_audio = models.FileField(null = True, blank = True, upload_to="audio", verbose_name = "Результат созвона в аудио")
     call_text = models.TextField(default = "no call", verbose_name = "Результат созвона в текстовом виде")
     response = models.BooleanField(default = False)
 
