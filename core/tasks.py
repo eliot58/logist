@@ -13,12 +13,13 @@ import requests
 import base64 
 import json
 from datetime import datetime, timezone, timedelta
-import subprocess
 
 def format_phone(phone):
     format_phone = ''.join(filter(str.isdigit, phone))
-    if format_phone[0] == "+":
-        pass
+    if format_phone[0] == '8':
+        format_phone[0] = '7'
+    
+    return '+' + format_phone
 
 
 
@@ -163,8 +164,8 @@ def call(self, id):
     for order in route.orders.all():
         text_to_gsm("Здравствуйте это петровские окна у вас на завтра есть заказ можете принять если нет продиктуйте пожалуйста новую дату и время принятия")
         sleep(5)
-        print(f'asterisk -rx "channel originate SIP/novofon/{order.phone.strip()} extension {order.phone.strip()}@novofon-out"')
-        os.system(f'asterisk -rx "channel originate SIP/novofon/{order.phone.strip()} extension {order.phone.strip()}@novofon-out"')
+        print(f'asterisk -rx "channel originate SIP/novofon/{format_phone(order.phone)} extension {format_phone(order.phone)}@novofon-out"')
+        os.system(f'asterisk -rx "channel originate SIP/novofon/{format_phone(order.phone)} extension {format_phone(order.phone)}@novofon-out"')
         sleep(60)
 
         data = json.loads(api.call('/v1/statistics/', {"start": get_hours_ago_datetime(), "end": get_current_datetime()}))
