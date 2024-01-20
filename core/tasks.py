@@ -16,7 +16,9 @@ import json
 from datetime import datetime, timezone, timedelta
 
 def format_phone(phone):
-    digit = ''.join(filter(str.isdigit, phone))
+    format_phone = ''.join(filter(str.isdigit, phone))
+    if format_phone[0] == "+":
+        pass
 
 
 
