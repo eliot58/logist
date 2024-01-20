@@ -163,7 +163,7 @@ def call(self, id):
         text_to_gsm("Здравствуйте это петровские окна у вас на завтра есть заказ можете принять если нет продиктуйте пожалуйста новую дату и время принятия")
         sleep(5)
         print(f'asterisk -rx "channel originate SIP/novofon/{order.phone} extension {order.phone}@novofon-out"')
-        os.system(f'asterisk -rx "channel originate SIP/novofon/{order.phone} extension {order.phone}@novofon-out"')
+        os.system(f'asterisk -rx "channel originate SIP/novofon/{order.phone.strip()} extension {order.phone.strip()}@novofon-out"')
         sleep(60)
 
         data = json.loads(api.call('/v1/statistics/', {"start": get_hours_ago_datetime(), "end": get_current_datetime()}))
