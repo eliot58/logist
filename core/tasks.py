@@ -169,11 +169,13 @@ def call(self, id):
 
         data = json.loads(api.call('/v1/statistics/', {"start": get_hours_ago_datetime(), "end": get_current_datetime()}))
         order.call_status = data["stats"][-1]["disposition"]
+        order.call_text = data["stats"][-1]["disposition"]
 
         if data["stats"][-1]["disposition"] == "answered":
             record = get_last()
             print(record)
             text = speech_to_text(record)
+            print(text)
             if text == None:
                 order.call_text = "Не удалось распознать"
             else:
@@ -181,9 +183,7 @@ def call(self, id):
             path = Path(record)
             with path.open(mode = 'rb') as f:
                 order.call_audio = File(f, name = path.name)
-            order.save()
-        else:
-            order.call_text = data["stats"][-1]["disposition"]
+                order.save()
     route.is_call = False
     route.save()
     
