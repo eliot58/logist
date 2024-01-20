@@ -175,7 +175,6 @@ def call(self, id):
                 order.call_text = "Не удалось распознать"
             else:
                 order.call_text = text
-            order.call_text(text)
             path = Path(record)
             with path.open(mode = 'rb') as f:
                 order.call_audio = File(f, name = path.name)
