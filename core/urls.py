@@ -15,5 +15,5 @@ urlpatterns = [
     path("route/<int:id>", route, name = "route"),
     path("create-route/", create_route, name = "create_route"),
     path("route/delete/<int:id>", route_delete, name = "route_delete"),
-
+    path("set-driver/", set_driver, name = "set_driver"),
 ]

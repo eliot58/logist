@@ -9,6 +9,7 @@ import redis
 from django.views.decorators.http import require_POST
 from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpResponseForbidden, JsonResponse
+from .tasks import call
 
 
 def login_view(request):
@@ -98,13 +99,20 @@ def create_route(request):
     for value in data["orders"]:
         order = Order.objects.create(**value)
         route.orders.add(order)
+    call.delay(route.id)
     return JsonResponse({"success": True})
 
 @login_required(login_url="/login/")
 @require_POST
 @csrf_exempt
 def set_driver(request):
-    
+    data = json.loads(request.body.decode())
+    route = Route.objects.get(id=data["id"])
+    route.driver_id = data["driver_id"]
+    route.save()
+    driver = Driver.objects.get(id=data["driver_id"])
+    driver.is_free = False
+    driver.save()
     return JsonResponse({"success": True})
 
 @login_required(login_url = "/login/")

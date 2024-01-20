@@ -24,16 +24,12 @@ class OrderAdmin(admin.ModelAdmin):
 
 @admin.register(Route)
 class RouteAdmin(admin.ModelAdmin):
-    list_display = ["author_name"]
+    list_display = ["id","author_name"]
 
     @admin.display(ordering = "author__fullName", description = "Автор")
     def author_name(self, obj): 
         return obj.author.fullName
     
-
-    @admin.display(ordering = "user__name", description = "Водитель")
-    def driver_name(self, obj):
-        return obj.driver.name
     
 @admin.register(LogEntry)
 class LogAdmin(admin.ModelAdmin):

@@ -1,5 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.core.files import File
+from pathlib import Path
 
 class Driver(models.Model):
     user = models.OneToOneField(User, on_delete = models.CASCADE, verbose_name = "Аккаунт")
@@ -48,7 +50,9 @@ class Order(models.Model):
     delivery_sum = models.CharField(max_length = 256, verbose_name = "Сумма доставки")
     delivery_time = models.CharField(max_length = 256, verbose_name = "Время")
     pos = models.CharField(max_length = 60, verbose_name = "Локация")
-    call_text = models.TextField(null = True, blank = True, verbose_name = "Результат созвона")
+    call_status = models.CharField(max_length = 60, default = "no call", verbose_name = "Статус звонка")
+    call_audio = models.FileField(null = True, blank = True, verbose_name = "Результат созвона в аудио")
+    call_text = models.TextField(default = "no call", verbose_name = "Результат созвона в текстовом виде")
     response = models.BooleanField(default = False)
 
     class Meta:

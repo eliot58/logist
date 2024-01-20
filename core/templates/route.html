@@ -31,7 +31,7 @@
                         <option value="{{ driver.id }}">{{ driver.name }}</option>
                     {% endfor %}
                 </select>
-                <button type="button" onclick="saveRoute()" id="next__modal" class="btn main__btn rating__btn">Создать маршрут</button>
+                <button type="button" onclick="setDriver('{{route.id}}')" id="next__modal" class="btn main__btn rating__btn">Создать маршрут</button>
             </div>
         </div>
         <section class="balance__company row">
@@ -87,12 +87,12 @@
                             <th>Комментарий</th>
                             <th>Контакт</th>
                             <th>Этаж</th>
-                            <th>Менеджер</th>
-                            <th>Расчетчик</th>
                             <th>Время</th>
                             <th>Сумма доставки</th>
                             <th>Клиент</th>
-                            <th>Статус</th>
+                            <th>Статус звонка</th>
+                            <th>Текст звонка</th>
+                            <th>Аудио звонка</th>
                         </tr>
                         {% for order in route.orders.all %}
                         <tr class="result__table-body">
@@ -115,12 +115,17 @@
                                 </div>
                             </td>
                             <td>{{order.floor}}</td>
-                            <td>{{order.manager}}</td>
-                            <td>{{order.calc_manager}}</td>
                             <td>{{order.delivery_time}}</td>
                             <td>{{order.delivery_sum}}</td>
                             <td>{{order.c_name}}</td>
-                            <td>{{order.s_name}}</td>
+                            <td>{{order.call_status}}</td>
+                            <td>{{order.call_text}}</td>
+                            <td>
+                                {% if order.call_audio %}
+                                    <a href="{{order.call_audio.url}}">Аудио</a>
+                                {% else %}
+                                {% endif %}
+                            </td>
                         </tr>
                         {% endfor %}
                         <tr class="result__table-body">
@@ -138,7 +143,13 @@
                             <td></td>
                             <td></td>
                             <td>
-                                <button type="button" onclick="document.querySelector('.popup-review').style.display = 'block'" style="background-color: #15CE73; padding: 8px 16px; border: none; border-radius: 8px; color: white;">Выбрать водителя</button>
+                                {% if route.driver %}
+                                {% else %}
+                                {% if route.is_call %}
+                                    {% else %}
+                                        <button type="button" onclick="document.querySelector('.popup-review').style.display = 'block'" style="background-color: #15CE73; padding: 8px 16px; border: none; border-radius: 8px; color: white;">Выбрать водителя</button>
+                                    {% endif %}
+                                {% endif %}
                             </td>
                         </tr>
                     </table>
@@ -148,6 +159,26 @@
     </div>
     <script src="https://code.jquery.com/jquery-3.6.1.min.js"></script>
     <script src="{% static 'assets/js/script.js' %}"></script>
+    <script>
+        async function setDriver(route_id){
+            let data = {
+                id: route_id,
+                driver_id: document.getElementsByName("driver")[0].value
+            };
+
+            let response = await fetch('/set-driver/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json;charset=utf-8'
+                },
+                body: JSON.stringify(data)
+            });
+
+            location.reload()
+
+
+        }
+    </script>
 </body>
 
 </html>
