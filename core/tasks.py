@@ -152,7 +152,7 @@ def text_to_wav(text, output_file="/usr/share/asterisk/sounds/custom/temp.wav", 
     tts = gTTS(text=text, lang=lang, slow=False)
     tts.save("temp.mp3")
     sound = AudioSegment.from_mp3("temp.mp3")
-    sound.export(output_file, format="wav")
+    sound.export(output_file, format="gsm")
 
 @shared_task(bind=True)
 def call(self, id):
