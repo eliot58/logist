@@ -143,9 +143,9 @@ def speech_to_text(audio_file_path):
             text = recognizer.recognize_google(audio_data, language="ru")
             return text
         except sr.UnknownValueError:
-            print("Речь не распознана")
+            return None
         except sr.RequestError as e:
-            print(f"Ошибка при отправке запроса к API: {e}")
+            return None
 
 
 def text_to_gsm(text, output_file="/usr/share/asterisk/sounds/custom/temp.gsm", lang="ru"):
@@ -171,7 +171,10 @@ def call(self, id):
         if data["stats"][-1]["disposition"] == "answered":
             record = get_last()
             text = speech_to_text(record)
-            order.call_text = text
+            if text == None:
+                order.call_text = "Не удалось распознать"
+            else:
+                order.call_text = text
             order.call_text(text)
             path = Path(record)
             with path.open(mode = 'rb') as f:
