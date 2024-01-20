@@ -1,7 +1,6 @@
 from celery import shared_task
 from .models import *
 from gtts import gTTS
-from pydub import AudioSegment
 import speech_recognition as sr
 import os
 from time import sleep
@@ -14,6 +13,7 @@ import requests
 import base64 
 import json
 from datetime import datetime, timezone, timedelta
+import subprocess
 
 def format_phone(phone):
     format_phone = ''.join(filter(str.isdigit, phone))
@@ -148,18 +148,19 @@ def speech_to_text(audio_file_path):
             print(f"Ошибка при отправке запроса к API: {e}")
 
 
-def text_to_wav(text, output_file="/usr/share/asterisk/sounds/custom/temp.wav", lang="ru"):
+def text_to_gsm(text, output_file="/usr/share/asterisk/sounds/custom/temp.gsm", lang="ru"):
     tts = gTTS(text=text, lang=lang, slow=False)
     tts.save("temp.mp3")
-    sound = AudioSegment.from_mp3("temp.mp3")
-    sound.export(output_file, format="gsm")
+    os.system(f"sox temp.mp3 -r 8000 -e gsm {output_file}")
+
+    
 
 @shared_task(bind=True)
 def call(self, id):
     api = NovofonApi(key=os.getenv('API_KEY'), secret=os.getenv('API_SECRET'))
     route = Route.objects.get(id=id)
     for order in route.orders.all():
-        text_to_wav("Здравствуйте это петровские окна у вас на завтра есть заказ можете принять если нет продиктуйте пожалуйста новую дату и время принятия")
+        text_to_gsm("Здравствуйте это петровские окна у вас на завтра есть заказ можете принять если нет продиктуйте пожалуйста новую дату и время принятия")
         sleep(5)
         os.system(f'asterisk -rx "channel originate SIP/novofon/{order.phone} extension {order.phone}@novofon-out"')
         sleep(60)
