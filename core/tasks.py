@@ -133,6 +133,7 @@ def get_last():
         sort_date_list = sorted(date_list, key=lambda x: x[1], reverse=True)
 
     return sort_date_list[0][0]
+
 def speech_to_text(audio_file_path):
     recognizer = sr.Recognizer()
 
@@ -171,6 +172,7 @@ def call(self, id):
 
         if data["stats"][-1]["disposition"] == "answered":
             record = get_last()
+            print(record)
             text = speech_to_text(record)
             if text == None:
                 order.call_text = "Не удалось распознать"
