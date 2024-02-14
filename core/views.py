@@ -20,9 +20,6 @@ def login_view(request):
 
             user = authenticate(username = cd["username"], password = cd["password"])
             if user.is_active:
-                if "remember" not in request.POST:
-                    request.session.set_expiry(0)
-                    request.session.modified = True
                 login(request, user)
                 return redirect(index)
             else:
@@ -90,6 +87,7 @@ def index(request):
 def routes(request):
     return render(request, "routes.html", {"routes": Route.objects.filter(author = request.user.logist)})
 
+
 @login_required(login_url="/login/")
 @require_POST
 @csrf_exempt
@@ -101,6 +99,7 @@ def create_route(request):
         route.orders.add(order)
     call.delay(route.id)
     return JsonResponse({"success": True})
+
 
 @login_required(login_url="/login/")
 @require_POST
@@ -114,6 +113,7 @@ def set_driver(request):
     driver.is_free = False
     driver.save()
     return JsonResponse({"success": True})
+
 
 @login_required(login_url = "/login/")
 def route(request, id):

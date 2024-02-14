@@ -35,11 +35,11 @@ def get_current_datetime():
 
 
 def get_hours_ago_datetime():
-    msk_timezone = timezone(timedelta(hours=3))
+    msk_timezone = timezone(timedelta(hours = 3))
 
     current_datetime_msk = datetime.now(msk_timezone)
 
-    yesterday_datetime_msk = current_datetime_msk - timedelta(hours=1)
+    yesterday_datetime_msk = current_datetime_msk - timedelta(hours = 1)
 
     formatted_yesterday_datetime = yesterday_datetime_msk.strftime("%Y-%m-%d 00:00:00")
 
@@ -119,21 +119,8 @@ class NovofonApi():
             bts = bytes(hmac_h.hexdigest()).encode('utf8')
         auth = self.key + ':' + base64.b64encode(bts).decode()
         return auth
-    
-# api = NovofonApi(key='631beaed144d4ff61bef', secret='840f35914999a041f306')
-# data = json.loads(api.call('/v1/statistics/', {"start": get_hours_ago_datetime(), "end": get_current_datetime()}))
-# print(data["stats"][-1]["disposition"])
 
 
-def get_last():
-    dir_list = [os.path.join("/records", x) for x in os.listdir("/records")]
-
-    if dir_list:
-        date_list = [[x, os.path.getctime(x)] for x in dir_list]
-
-        sort_date_list = sorted(date_list, key=lambda x: x[1], reverse=True)
-
-    return sort_date_list[0][0]
 
 def speech_to_text(audio_file_path):
     recognizer = sr.Recognizer()
@@ -150,11 +137,6 @@ def speech_to_text(audio_file_path):
             return None
 
 
-def text_to_gsm(text, output_file="/usr/share/asterisk/sounds/custom/temp.gsm", lang="ru"):
-    tts = gTTS(text=text, lang=lang, slow=False)
-    tts.save("temp.mp3")
-    os.system(f"sox temp.mp3 -r 8000 -e gsm {output_file}")
-
     
 
 @shared_task(bind=True)
@@ -162,10 +144,8 @@ def call(self, id):
     api = NovofonApi(key=os.getenv('API_KEY'), secret=os.getenv('API_SECRET'))
     route = Route.objects.get(id=id)
     for order in route.orders.all():
-        text_to_gsm("Здравствуйте это петровские окна у вас на завтра есть заказ можете принять если нет продиктуйте пожалуйста новую дату и время принятия")
-        sleep(5)
-        print(f'asterisk -rx "channel originate SIP/novofon/{format_phone(order.phone)} extension {format_phone(order.phone)}@novofon-out"')
-        os.system(f'asterisk -rx "channel originate SIP/novofon/{format_phone(order.phone)} extension {format_phone(order.phone)}@novofon-out"')
+        print(f'asterisk -rx "channel originate SIP/novofon/{format_phone(order.phone)} extension {format_phone(order.phone)}@novofon-out-{order.delivery_time}"')
+        os.system(f'asterisk -rx "channel originate SIP/novofon/{format_phone(order.phone)} extension {format_phone(order.phone)}@novofon-out-{order.delivery_time}"')
         sleep(60)
 
         data = json.loads(api.call('/v1/statistics/', {"start": get_hours_ago_datetime(), "end": get_current_datetime()}))
@@ -173,15 +153,12 @@ def call(self, id):
         order.call_text = data["stats"][-1]["disposition"]
 
         if data["stats"][-1]["disposition"] == "answered":
-            record = get_last()
-            print(record)
-            text = speech_to_text(record)
-            print(text)
+            text = speech_to_text("/records/output.wav")
             if text == None:
                 order.call_text = "Не удалось распознать"
             else:
                 order.call_text = text
-            path = Path(record)
+            path = Path("/records/output.wav")
             with path.open(mode = 'rb') as f:
                 order.call_audio = File(f, name = path.name)
                 order.save()

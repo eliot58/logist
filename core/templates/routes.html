@@ -1,96 +1,36 @@
+{% extends 'base.html' %}
+
+{% block title %} Маршруты {% endblock title %}
+
 {% load static %}
-<!DOCTYPE html>
-<html lang="en">
 
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=1400">
-    <title>Okna-petrov.logist</title>
-    <link rel="shortcut icon" href="{% static 'assets/img/favicon.png' %}" type="image/x-icon" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css">
-    <link rel="stylesheet" href="{% static 'css/vendor.css' %}">
-</head>
+{% block content %}
 
-<body>
-    <div class="wrapper__provider">
-        <div class="popup-profile-page popup-fade" id="send__modal">
-            <div class="popup">
-                <img src="{% static 'assets/img/profile.svg' %}" alt="profile">
-                <h1>Заполните свой профиль</h1>
-                <a id="close__modal" href="" class="btn main__btn rating__btn">Мой профиль</a>
-            </div>
-        </div>
-        <section class="balance__company row">
-            <div class="d-flex flex-column flex-shrink-0 bg-body-tertiary" style="width: 4.5rem;">
-                <a href="/" class="d-block p-3 link-body-emphasis text-decoration-none" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-original-title="Icon-only">
-                    <img src="{% static 'assets/img/logo_petr.png' %}" alt="">
-                  <span class="visually-hidden">Icon-only</span>
-                </a>
-                <ul class="nav nav-pills nav-flush flex-column mb-auto text-center">
-                  <li class="nav-item">
-                    <a href="{% url 'index' %}" class="nav-link py-3 border-bottom rounded-0" data-bs-toggle="tooltip" data-bs-placement="right" aria-label="Home" data-bs-original-title="Home">
-                        <img src="{% static 'assets/img/ico/my-orders.svg' %}" alt="Мои заказы">
-                    </a>
-                  </li>
-                  <li>
-                    <a href="{% url 'routes' %}" class="nav-link py-3 border-bottom rounded-0" data-bs-toggle="tooltip" data-bs-placement="right" aria-label="Dashboard" data-bs-original-title="Dashboard">
-                        <img src="{% static 'assets/img/ico/gps.svg' %}" alt="Маршруты">
-                    </a>
-                  </li>
-                  <li>
-                    <a href="https://t.me/chattodotodo_bot?start=IGS-6Nn-twD17M6tfFgpg" class="nav-link py-3 border-bottom rounded-0" data-bs-toggle="tooltip" data-bs-placement="right" aria-label="Orders" data-bs-original-title="Orders">
-                        <img src="{% static 'assets/img/ico/support.svg' %}" alt="Помощь">
-                    </a>
-                  </li>
-                  <li>
-                    <a href="{% url 'logout_core_view' %}" class="nav-link py-3 border-bottom rounded-0" data-bs-toggle="tooltip" data-bs-placement="right" aria-label="Products" data-bs-original-title="Products">
-                        <img src="{% static 'assets/img/ico/logout.svg' %}" alt="Выход">
-                    </a>
-                  </li>
-                </ul>
-              </div>
-            <div class="profile__content col-xl-11">
-                <div class="profile__nav row">
-                    <div class="profile__nav-title col-xl-11">
-                        <h1>Маршруты</h1>
-                    </div>
-                    <div class="profile__nav-logo col-xl-1 d-flex align-items-center">
-                        <div class="profile__nav-wrapper d-flex align-items-center">
-                            <img src="{% static 'assets/img/ico/profile-logo-diler.svg' %}" alt="logo">
-                            <p class="profile__nav-logo-title">{{ request.user.username }}</p>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="process__work table-responsive">
-                    <table class="result__table">
-                        <tr class="result__table-head">
-                            <th>ID</th>
-                            <th>Водитель</th>
-                            <th>Статус</th>
-                            <th>Количество заказов</th>
-                            <th></th>
-                        </tr>
-                        {% for route in routes %}
-                        <tr class="result__table-body">
-                            <td>{{ route.id }}</td>
-                            <td>{{ route.driver.name }}</td>
-                            <td>{% if route.is_finish %} Выполнен {% else %} {% if route.driver %} Выполняется {% else %} {% if route.is_call %} Идет прозвон {% else %} Нужно выбрать водителя {% endif %} {% endif %}{% endif %}</td>
-                            <td>{{ route.orders.all|length }}</td>
-                            <td>
-                                <a href="{% url 'route' route.id %}" class="response">Подробно</a>
-                            </td>
-                            <td>
-                                <a href="{% url 'route_delete' route.id %}"><img src="{% static 'assets/img/delete.svg' %}" alt=""></a>
-                            </td>
-                        </tr>
-                        {% endfor %}
-                    </table>
-                </div>
-            </div>
-        </section>
-    </div>
-</body>
+<div class="container">
+    
+    <table style="width: 50%; margin: 0 auto;">
+        <tr>
+            <th>ID</th>
+            <th>Водитель</th>
+            <th>Статус</th>
+            <th>Количество заказов</th>
+            <th></th>
+        </tr>
+        {% for route in routes %}
+            <tr>
+                <td>{{ route.id }}</td>
+                <td>{{ route.driver.name }}</td>
+                <td>{% if route.is_finish %} Выполнен {% else %} {% if route.driver %} Выполняется {% else %} {% if route.is_call %} Идет прозвон {% else %} Нужно выбрать водителя {% endif %} {% endif %}{% endif %}</td>
+                <td>{{ route.orders.all|length }}</td>
+                <td>
+                    <a href="{% url 'route' route.id %}" style="display: block; padding: 10px 25px; background-color: #15CE73; font-weight: 500; color: #fff; border-radius: 8px;">Подробно</a>
+                </td>
+                <td>
+                    <a href="{% url 'route_delete' route.id %}"><img src="{% static 'img/delete.svg' %}" alt=""></a>
+                </td>
+            </tr>
+            {% endfor %}
+    </table>
+</div>
 
-</html>
+{% endblock content %}

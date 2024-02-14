@@ -1,0 +1,45 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=1440">
+    <link rel="stylesheet" href="{% static 'style.css' %}">
+    <title>{% block title %} {% endblock title %}</title>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">
+                <img src="{% static 'img/logo.png' %}" alt="">
+            </div>
+            <nav>
+                <ul>
+                    <li><a {% if request.path == '/' %} class="nav-item__active" {% endif %} href="{% url 'index' %}">Заказы</a></li>
+                    <li><a {% if not request.path == '/' %} class="nav-item__active" {% endif %} href="{% url 'routes' %}">Маршруты</a></li>
+                </ul>
+            </nav>
+            <div class="exit">
+                <a href="{% url 'logout_core_view' %}">Выйти</a>
+                <img src="{% static 'img/exit.svg' %}" alt="">
+            </div>
+        </header>
+    </div>
+    {% block content %}
+        
+    {% endblock content %}
+    
+    {% block script %}{% endblock script %}
+    <script>
+        window.addEventListener('click', function(event) {
+			let popups = document.querySelectorAll('#popup');
+			for (let popup of popups) {
+				if (event.target == popup) {
+					popup.style.display = 'none';
+				}
+			}
+			
+		});
+    </script>
+</body>
+</html>

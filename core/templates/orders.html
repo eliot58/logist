@@ -1,543 +1,458 @@
+{% extends 'base.html' %}
+
+{% block title %} Заказы {% endblock title %}
+
 {% load static %}
-{% load custom_tags %}
-<!DOCTYPE html>
-<html lang="en">
 
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=1400">
-    <title>Okna-petrov.logist</title>
-    <link rel="shortcut icon" href="{% static 'assets/img/favicon.png' %}" type="image/x-icon" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css">
-    <link rel="stylesheet" href="{% static 'css/vendor.css' %}">
-    <style>
-        .location-button {
-            position: fixed;
-            right: 20px;
-            bottom: 20px;
-            transform: translate(-50%, -50%);
-            border-radius: 50%;
-            width: 60px;
-            height: 60px;
-            z-index: 9999;
-            background-color: #00ff80;
-            background-image: url("static/assets/img/ico/location.svg");
-            background-size: 50%;
-            background-repeat: no-repeat;
-            background-position: 50% 50%;
-        }
+{% block content %}
 
-        .info-button {
-            position: fixed;
-            right: 100px;
-            bottom: 20px;
-            transform: translate(-50%, -50%);
-            border-radius: 50%;
-            width: 60px;
-            height: 60px;
-            z-index: 9999;
-            background-color: #00ff80;
-            background-image: url("static/assets/img/ico/my-order.svg");
-            background-size: 50%;
-            background-repeat: no-repeat;
-            background-position: 50% 50%;
-        }
+<div id="popup" class="popup map-popup">
+    <div class="popup-content">
+        
+    </div>
+</div>
 
-        .location-button:before, .info-button:before, .info-button:after,
-        .location-button:after {
-            content: " ";
-            display: block;
-            position: absolute;
-            border: 50%;
-            border: 1px solid #00ff80;
-            left: -20px;
-            right: -20px;
-            top: -20px;
-            bottom: -20px;
-            border-radius: 50%;
-            animation: border-animate 1.5s linear infinite;
-            opacity: 0;
-        }
-    </style>
-</head>
+<div id="popup" class="popup routes-popup">
+    <div class="popup-content" style="width: 90%; display: flex; flex-direction: column; align-items: center;">
+        <table style="width: 100%;">
+        </table>
+        <button type="button" style="background: #00ff80; border-radius: 15px; border: none; padding: 10px 0px; font-size: 16px; font-weight: 700; margin-top: 10px; width: 200px;" onclick="saveRoute()">Созвон</button>
+    </div>
+</div>
 
-<body>
-    <div class="wrapper__provider">
-
-        <div class="popup-cart popup-fade" id="send__modal">
-            <div class="cart-popup" style="width: 1000px;">
-                <img src="{% static 'assets/img/ico/delete.svg' %}" style="position: absolute; top: 10px; right: 10px; padding: 5px;" onclick="this.parentNode.parentNode.style.display = 'none'" alt="">
-            </div>
-        </div>
-
-        <div class="popup-info popup-fade" id="send__modal">
-            <div class="cart-popup" style="width: 1200px;">
-                <img src="{% static 'assets/img/ico/delete.svg' %}" style="position: absolute; top: 10px; right: 10px; padding: 5px;" onclick="this.parentNode.parentNode.style.display = 'none';" alt="">
-                <table class="result__table popup_table">
-                    <tr class="result__table-head popup_table">
-                        <th>№</th>
-                        <th>Количество изделий</th>
-                        <th>Общая площадь изделий</th>
-                        <th>Комментарий</th>
-                        <th>Этаж</th>
-                        <th>Адрес</th>
-                        <th>Статус</th>
-                        <th></th>
-                    </tr>
-                </table>
-                <button type="button" style="background: #00ff80;border-radius: 15px;border: none;padding: 10px 75px;font-size: 16px;font-weight: 700; margin-top: 10px;" onclick="saveRoute()">Созвон</button>
-            </div>
-        </div>
-        <section class="balance__company row">
-            
-            <div class="d-flex flex-column flex-shrink-0 bg-body-tertiary" style="width: 4.5rem;">
-                <a href="/" class="d-block p-3 link-body-emphasis text-decoration-none" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-original-title="Icon-only">
-                    <img src="{% static 'assets/img/logo_petr.png' %}" alt="">
-                  <span class="visually-hidden">Icon-only</span>
-                </a>
-                <ul class="nav nav-pills nav-flush flex-column mb-auto text-center">
-                  <li class="nav-item">
-                    <a href="" class="nav-link py-3 border-bottom rounded-0" data-bs-toggle="tooltip" data-bs-placement="right" aria-label="Home" data-bs-original-title="Home">
-                        <img src="{% static 'assets/img/ico/order-active.svg' %}" alt="Мои заказы">
-                    </a>
-                  </li>
-                  <li>
-                    <a href="{% url 'routes' %}" class="nav-link py-3 border-bottom rounded-0" data-bs-toggle="tooltip" data-bs-placement="right" aria-label="Dashboard" data-bs-original-title="Dashboard">
-                        <img src="{% static 'assets/img/ico/gps-inactive.svg' %}" alt="Маршруты">
-                    </a>
-                  </li>
-                  <li>
-                    <a href="https://t.me/chattodotodo_bot?start=IGS-6Nn-twD17M6tfFgpg" class="nav-link py-3 border-bottom rounded-0" data-bs-toggle="tooltip" data-bs-placement="right" aria-label="Orders" data-bs-original-title="Orders">
-                        <img src="{% static 'assets/img/ico/support.svg' %}" alt="Помощь">
-                    </a>
-                  </li>
-                  <li>
-                    <a href="{% url 'logout_core_view' %}" class="nav-link py-3 border-bottom rounded-0" data-bs-toggle="tooltip" data-bs-placement="right" aria-label="Products" data-bs-original-title="Products">
-                        <img src="{% static 'assets/img/ico/logout.svg' %}" alt="Выход">
-                    </a>
-                  </li>
-                </ul>
-              </div>
-            <div class="profile__content col-xl-11">
-                <div class="profile__nav row">
-                    <div class="profile__nav-title col-xl-11">
-                        <h1>Заказы</h1>
-                    </div>
-                    <div class="profile__nav-logo col-xl-1 d-flex align-items-center">
-                        <div class="profile__nav-wrapper d-flex align-items-center">
-                            <img src="{% static 'assets/img/ico/profile-logo-diler.svg' %}" alt="logo">
-                            <p class="profile__nav-logo-title">{{ request.user.username }}</p>
+<div class="container">
+    <div style="display: flex; align-items: center; margin: 20px 0px;">
+        <select id="filter" style="border: 1px solid #00ff80; box-shadow: 0px 4px 50px rgba(0, 0, 0, 0.05); border-radius: 15px; padding: 10px 60px;" onchange="window.location.href = `?filter=${this.value}`">
+            <option value="all" selected>Все</option>
+            <option value="work">В производстве</option>
+            <option value="sklad">На складе</option>
+            <option value="loaded">Отгружен</option>
+            <option value="finish">Завершен</option>
+        </select>
+        <select id="filter" style="border: 1px solid #00ff80; box-shadow: 0px 4px 50px rgba(0, 0, 0, 0.05); border-radius: 15px; padding: 10px 60px; margin: 0px 20px;" onchange="if (this.value == 'date'){location.reload()} else {sortTableByDate()}">
+            <option value="date" selected>По дате</option>
+            <option value="date_logist">По дате логиста</option>
+        </select>
+        <button type="button" style="background: #00ff80; border-radius: 15px; border: none; padding: 10px 60px; font-size: 16px; font-weight: 700;" onclick="window.location.href = '?reload=1'">Обновить</button>
+    </div>
+    <table style="width: 100%;">
+        <tr>
+            <th>№</th>
+            <th>Дата</th>
+            <th>Дата логиста</th>
+            <th>Количество изделий</th>
+            <th>Общая площадь изделий</th>
+            <th>Комментарий</th>
+            <th>Клиент</th>
+            <th>Этаж</th>
+            <th>Менеджер & Расчетчик</th>
+            <th>Время</th>
+            <th>Сумма доставки</th>
+            <th>Адрес</th>
+            <th>Статус</th>
+            <th></th>
+        </tr>
+        {% for order in orders %}
+            <tr class="orders">
+                <td id="o_name">{{order.o_name}}</td>
+                {% if order.plan_date %}
+                    <td id="plan_date">{{order.plan_date}}</td>
+                {% else %}
+                    <td id="plan_date"></td>
+                {% endif %}
+                <td><input id="date_logist" onchange="changeLogistDate(this.parentNode.parentNode.getElementsByTagName('td')[0].textContent, this.value)" type="date" style="max-width: 100px;
+                    border: 2px solid #15CE73;
+                    border-radius: 8px;
+                    text-align: center;
+                    padding: 3px 10px;
+                    transition: all 0.3s;"></td>
+                {% if order.qu %}
+                    <td id="qu">{{order.qu}}</td>
+                {% else %}
+                    <td id="qu"></td>
+                {% endif %}
+                {% if order.sqr %}
+                    <td id="sqr">{{order.sqr}}</td>
+                {% else %}
+                    <td id="sqr"></td>
+                {% endif %}
+                {% if order.transportinfo %}
+                    <td id="transportinfo" style="max-width: 200px;" contenteditable="true">{{order.transportinfo}}</td>
+                {% else %}
+                    <td id="transportinfo"></td>
+                {% endif %}
+                <td style="max-width: 200px;">
+                    <div id="accordeon" class="acc__container">
+                        <div id="contact" class="acc__head" onclick="if (this.nextElementSibling.style.display == 'block') {this.nextElementSibling.style.display = 'none'} else {this.nextElementSibling.style.display = 'block'}">
+                            {{ order.contact }}
+                            <img src="{% static 'img/slideup.svg' %}" style="margin-left: 5px;" alt="slideup">
+                        </div>
+                        <div class="acc__body">
+                            <p id="c_name">{{ order.c_name }}</p>
+                            <p contenteditable="true" id="phone">{{ order.phone }}</p>
                         </div>
                     </div>
-                </div>
-                <select id="filter" style="margin-left: 60px;margin-right: 5px; border: 1px solid #00ff80;box-shadow: 0px 4px 50px rgba(0, 0, 0, 0.05);border-radius: 15px;padding: 10px 60px;" onchange="window.location.href = `?filter=${this.value}`">
-                    <option value="all" selected>Все</option>
-                    <option value="work">В производстве</option>
-                    <option value="sklad">На складе</option>
-                    <option value="loaded">Отгружен</option>
-                    <option value="finish">Завершен</option>
-                </select>
-                <select id="filter" style="margin-left: 10px;margin-right: 20px; border: 1px solid #00ff80;box-shadow: 0px 4px 50px rgba(0, 0, 0, 0.05);border-radius: 15px;padding: 10px 60px;" onchange="if (this.value == 'date'){location.reload()} else {sortTableByDate()}">
-                    <option value="date" selected>По дате</option>
-                    <option value="date_logist">По дате логиста</option>
-                </select>
-                <button type="button" style="background: #00ff80;border-radius: 15px;border: none;padding: 10px 60px;font-size: 16px;font-weight: 700; margin-top: 10px;" onclick="window.location.href = '?reload=1'">Обновить</button>
-                <div class="process__work table-responsive">
-                    <table class="result__table main-table">
-                        <tr class="result__table-head">
-                            <th>№</th>
-                            <th>Дата</th>
-                            <th>Дата логиста</th>
-                            <th>Количество изделий</th>
-                            <th>Общая площадь изделий</th>
-                            <th>Комментарий</th>
-                            <th>Клиент</th>
-                            <th>Этаж</th>
-                            <th>Менеджер</th>
-                            <th>Расчетчик</th>
-                            <th>Время</th>
-                            <th>Сумма доставки</th>
-                            <th>Адрес</th>
-                            <th>Статус</th>
-                            <th></th>
-                        </tr>
-                        {% for order in orders %}
-                        <tr class="result__table-body">
-                            <td id="o_name">{{order.o_name}}</td>
-                            {% if order.plan_date %}
-                                <td id="plan_date">{{order.plan_date}}</td>
-                            {% else %}
-                                <td id="plan_date"></td>
-                            {% endif %}
-                            <td><input id="date_logist" onchange="changeLogistDate(this.parentNode.parentNode.getElementsByTagName('td')[0].textContent, this.value)" type="date" style="max-width: 90px;
-                                border: 2px solid #15CE73;
-                                border-radius: 8px;
-                                text-align: center;
-                                padding: 3px 10px;
-                                transition: all 0.3s;"></td>
-                            {% if order.qu %}
-                                <td id="qu">{{order.qu}}</td>
-                            {% else %}
-                                <td id="qu"></td>
-                            {% endif %}
-                            {% if order.sqr %}
-                                <td id="sqr">{{order.sqr}}</td>
-                            {% else %}
-                                <td id="sqr"></td>
-                            {% endif %}
-                            {% if order.transportinfo %}
-                                <td id="transportinfo" style="max-width: 200px;" contenteditable="true">{{order.transportinfo}}</td>
-                            {% else %}
-                                <td id="transportinfo"></td>
-                            {% endif %}
-                            <td style="max-width: 200px;">
-                                <div id="accordeon" class="acc__container">
-                                    <div id="contact" class="acc__head">
-                                        {{ order.contact }}
-                                        <img src="{% static 'assets/img/ico/slideup.svg' %}" alt="slideup">
-                                    </div>
-                                    <div class="acc__body">
-                                        <p id="c_name">{{ order.c_name }}</p>
-                                        <p contenteditable="true" id="phone">{{ order.phone }}</p>
-                                    </div>
-                                </div>
-                            </td>
-                            {% if order.floor %}
-                                <td id="floor">{{order.floor}}</td>
-                            {% else %}
-                                <td id="floor"></td>
-                            {% endif %}
+                </td>
+                {% if order.floor %}
+                    <td id="floor">{{order.floor}}</td>
+                {% else %}
+                    <td id="floor"></td>
+                {% endif %}
+                <td>
+                    <div id="accordeon" class="acc__container">
+                        <div id="contact" class="acc__head" onclick="if (this.nextElementSibling.style.display == 'block') {this.nextElementSibling.style.display = 'none'} else {this.nextElementSibling.style.display = 'block'}">
+                            подробно
+                            <img src="{% static 'img/slideup.svg' %}" style="margin-left: 5px;" alt="slideup">
+                        </div>
+                        <div class="acc__body">
                             {% if order.people3 %}
-                                <td id="people3">{{order.people3}}</td>
-                            {% else %}
-                                <td id="people3"></td>
+                                <p>Менеджер</p>
+                                <p id="people3" style="border-bottom: 2px solid #0B344B;">{{order.people3}}</p>
                             {% endif %}
                             {% if order.people %}
-                                <td id="people">{{order.people}}</td>
-                            {% else %}
-                                <td id="people"></td>
+                                <p>Расчетчик</p>
+                                <p id="people">{{order.people}}</p>
                             {% endif %}
-                            {% if order.deliverytime %}
-                                <td id="deliverytime">{{order.deliverytime}}</td>
-                            {% else %}
-                                <td id="deliverytime"></td>
-                            {% endif %}
-                            <td id="sm_delivery">{{order.sm_delivery}}</td>
-                            <td id="address" style="max-width: 200px;" contenteditable="true">{{order.address}}</td>
-                            <td id="s_name">{{order.s_name}}</td>
-                            <td>
-                                <button type="button"
-                                    onclick="if (this.textContent == 'Добавлено') {removeRouteByName(this.parentNode.parentNode.getElementsByTagName('td')[0].textContent); this.style.backgroundColor = '#15ce73'; this.textContent = 'Добавить'; return} createRoute(this, '{{order.o_name}}', this.parentNode.parentNode.querySelector('#o_name').textContent, this.parentNode.parentNode.querySelector('#plan_date').textContent, this.parentNode.parentNode.querySelector('#date_logist').value, this.parentNode.parentNode.querySelector('#qu').textContent, this.parentNode.parentNode.querySelector('#sqr').textContent, this.parentNode.parentNode.querySelector('#transportinfo').textContent, '{{order.contact}}', this.parentNode.parentNode.querySelector('#address').textContent, this.parentNode.parentNode.querySelector('#phone').textContent, this.parentNode.parentNode.querySelector('#floor').textContent, this.parentNode.parentNode.querySelector('#people3').textContent, this.parentNode.parentNode.querySelector('#people').textContent, this.parentNode.parentNode.querySelector('#deliverytime').textContent, this.parentNode.parentNode.querySelector('#sm_delivery').textContent, '{{ order.c_name }}', '{{ order.s_name }}');"
-                                    class="response">Добавить</button>
-                            </td>
-                        </tr>
-                        {% endfor %}
-                    </table>
-                </div>
-            </div>
-        </section>
-    </div>
-    <a href="#" onclick="return false;">
-        <span class="location-button" onclick="cartRender()"></span>
-    </a>
-    <a href="#" onclick="return false;">
-        <span class="info-button" onclick="renderTable()"></span>
-    </a>
-    <div id="snackbar">Не удалось добавить</div>
-    <script src="https://code.jquery.com/jquery-3.6.1.min.js"></script>
-    <script src="{% static 'assets/js/script.js' %}"></script>
-    <script>
+                        </div>
+                    </div>
+                </td>
+                <td>
+                    <select id="deliverytime" style="max-width: 100px;
+                    border: 2px solid #15CE73;
+                    border-radius: 8px;
+                    text-align: center;
+                    padding: 3px 10px;
+                    transition: all 0.3s;">
+                        <option value="8-12">8-12</option>
+                        <option value="10-14">10-14</option>
+                        <option value="12-16">12-16</option>
+                        <option value="14-18">14-18</option>
+                    </select>
+                </td>
+                <td id="sm_delivery">{{order.sm_delivery}}</td>
+                <td id="address" style="max-width: 200px;" contenteditable="true">{{order.address}}</td>
+                <td id="s_name">{{order.s_name}}</td>
+                <td>
+                    <button type="button" style="padding: 10px 25px; background-color: #15CE73; font-weight: 500; color: #fff; border-radius: 8px;"
+                        onclick="if (this.textContent == 'Добавлено') {removeRouteByName(this.parentNode.parentNode.getElementsByTagName('td')[0].textContent); this.style.backgroundColor = '#15ce73'; this.textContent = 'Добавить'; return} createRoute(this, '{{order.o_name}}', this.parentNode.parentNode.querySelector('#o_name').textContent, this.parentNode.parentNode.querySelector('#plan_date').textContent, this.parentNode.parentNode.querySelector('#date_logist').value, this.parentNode.parentNode.querySelector('#qu').textContent, this.parentNode.parentNode.querySelector('#sqr').textContent, this.parentNode.parentNode.querySelector('#transportinfo').textContent, '{{order.contact}}', this.parentNode.parentNode.querySelector('#address').textContent, this.parentNode.parentNode.querySelector('#phone').textContent, this.parentNode.parentNode.querySelector('#floor').textContent, this.parentNode.parentNode.querySelector('#people3').textContent, this.parentNode.parentNode.querySelector('#people').textContent, this.parentNode.parentNode.querySelector('#deliverytime').value, this.parentNode.parentNode.querySelector('#sm_delivery').textContent, '{{ order.c_name }}', '{{ order.s_name }}');"
+                        class="response">Добавить</button>
+                </td>
+            </tr>
+        {% endfor %}
+    </table>
+</div>
 
-        window.addEventListener('load', function () {
-            const urlParams = new URLSearchParams(window.location.search);
-            if (urlParams.get('filter') == null){
-                document.querySelector("select#filter").value = "all"
-            } else {
-                document.querySelector("select#filter").value = urlParams.get('filter')
+<a href="#" onclick="return false;">
+    <span class="location-button" onclick="mapRender()"></span>
+</a>
+<a href="#" onclick="return false;">
+    <span class="info-button" onclick="renderTable()"></span>
+</a>
+<div id="snackbar">Не удалось добавить</div>
+
+{% endblock content %}
+
+
+{% block script %}
+<script>
+    window.addEventListener('load', function () {
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get('filter') == null){
+            document.querySelector("select#filter").value = "all"
+        } else {
+            document.querySelector("select#filter").value = urlParams.get('filter')
+        }
+
+        dateLogist = localStorage.getItem("dateLogist")
+        if (dateLogist == null) {
+            dateLogist = {}
+        } else {
+            dateLogist = JSON.parse(dateLogist)
+        }
+
+        orders = localStorage.getItem("orders")
+        if (orders == null) {
+            orders = []
+        } else {
+            orders = JSON.parse(orders)
+        }
+
+        const o_names = orders.map((x) => x["o_name"])
+
+        const tr = document.querySelectorAll(".orders")
+
+        for (const elem of tr){
+            const o_name = elem.querySelector("#o_name").textContent
+            if (o_name in dateLogist) {
+                elem.querySelector("#date_logist").value = dateLogist[o_name]
             }
-
-            dateLogist = localStorage.getItem("dateLogist")
-            if (dateLogist == null) {
-                dateLogist = {}
-            } else {
-                dateLogist = JSON.parse(dateLogist)
+            if (o_names.includes(o_name)) {
+                const btn = elem.querySelector("button")
+                btn.style.backgroundColor = "red"
+                btn.textContent = "Добавлено"
             }
+        }
 
+        
+    })
+
+
+
+    var draggables = document.querySelectorAll(".result__table-body.popup_table");
+    var draggedItem = null;
+
+    function handleDomChanges(mutationsList, observer) {
+        for (let mutation of mutationsList) {
+            if (mutation.type === 'childList') {
+                draggables = document.querySelectorAll(".result__table-body.popup_table");
+            } else if (mutation.type === 'attributes') {
+                draggables = document.querySelectorAll(".result__table-body.popup_table");
+            }
+        }
+    }
+
+    const observer = new MutationObserver(handleDomChanges);
+
+    observer.observe(document, { childList: true, subtree: true, attributes: true, attributeOldValue: true });
+
+
+    function swapElements(index1, index2) {
+
+        orders = localStorage.getItem("orders")
+
+        orders = JSON.parse(orders)
+
+        let tmp = orders[index1]
+
+        orders[index1] = orders[index2]
+
+        orders[index2] = tmp
+
+        localStorage.setItem("orders", JSON.stringify(orders))
+
+        let temp = draggables[index1].innerHTML;
+
+        draggables[index1].innerHTML = draggables[index2].innerHTML
+
+        draggables[index2].innerHTML = temp
+
+    }
+
+    function changeLogistDate(o_name, value){
+        dateLogist = localStorage.getItem("dateLogist")
+        if (dateLogist == null) {
+            dateLogist = {}
+        } else {
+            dateLogist = JSON.parse(dateLogist)
+        }
+        dateLogist[o_name] = value
+
+        localStorage.setItem("dateLogist", JSON.stringify(dateLogist))
+    }
+
+
+    async function createRoute(el, order_name, o_name, plan_date, date_logist, qu, sqr, transportinfo, contact, address, phone, floor, people3, people, deliverytime, sm_delivery, c_name, s_name) {
+
+        try {
             orders = localStorage.getItem("orders")
             if (orders == null) {
                 orders = []
             } else {
                 orders = JSON.parse(orders)
             }
+            let response = await fetch(`https://geocode-maps.yandex.ru/1.x/?apikey=52427b0d-4b85-4b1a-828b-ad4cf6903c9f&geocode=${address}&format=json`);
 
-            const o_names = orders.map((x) => x["o_name"])
+            let data = await response.json();
 
-            const tr = document.querySelectorAll(".result__table-body")
-
-            for (const elem of tr){
-                const o_name = elem.querySelector("#o_name").textContent
-                if (o_name in dateLogist) {
-                    elem.querySelector("#date_logist").value = dateLogist[o_name]
-                }
-                if (o_names.includes(o_name)) {
-                    const btn = elem.querySelector("button")
-                    btn.style.backgroundColor = "red"
-                    btn.textContent = "Добавлено"
-                }
-            }
-
-            
-        })
-
-
-
-        var draggables = document.querySelectorAll(".result__table-body.popup_table");
-        var draggedItem = null;
-
-        function handleDomChanges(mutationsList, observer) {
-            for (let mutation of mutationsList) {
-                if (mutation.type === 'childList') {
-                    draggables = document.querySelectorAll(".result__table-body.popup_table");
-                } else if (mutation.type === 'attributes') {
-                    draggables = document.querySelectorAll(".result__table-body.popup_table");
-                }
-            }
-        }
-
-        const observer = new MutationObserver(handleDomChanges);
-
-        observer.observe(document, { childList: true, subtree: true, attributes: true, attributeOldValue: true });
-
-
-        function swapElements(index1, index2) {
-
-            orders = localStorage.getItem("orders")
-
-            orders = JSON.parse(orders)
-
-            let tmp = orders[index1]
-
-            orders[index1] = orders[index2]
-
-            orders[index2] = tmp
+            orders.push({"o_name": o_name, "plan_date": plan_date, "date_logist": date_logist, "qu": qu, "sqr": sqr, "transportinfo": transportinfo, "contact": contact, "address": address, "phone": phone, "floor": floor, "manager": people3, "calc_manager": people, "delivery_time": deliverytime, "delivery_sum": sm_delivery, "c_name": c_name, "s_name": s_name, "pos": data.response.GeoObjectCollection.featureMember[0].GeoObject.Point.pos})
 
             localStorage.setItem("orders", JSON.stringify(orders))
 
-            let temp = draggables[index1].innerHTML;
+            el.style.backgroundColor = 'red';
 
-            draggables[index1].innerHTML = draggables[index2].innerHTML
+            el.textContent = 'Добавлено'
 
-            draggables[index2].innerHTML = temp
+        } catch (err) {
+            var x = document.getElementById("snackbar")
 
+            x.className = "show";
+
+            setTimeout(function(){ x.className = x.className.replace("show", ""); }, 5000);
         }
+        
+    }
 
-        function changeLogistDate(o_name, value){
-            dateLogist = localStorage.getItem("dateLogist")
-            if (dateLogist == null) {
-                dateLogist = {}
-            } else {
-                dateLogist = JSON.parse(dateLogist)
-            }
-            dateLogist[o_name] = value
 
-            localStorage.setItem("dateLogist", JSON.stringify(dateLogist))
+    function renderTable(){
+        for (let tr of document.querySelectorAll(".routes-popup table tr")){
+            tr.remove()
         }
+        const table = document.querySelector(".routes-popup table")
+        orders = JSON.parse(localStorage.getItem("orders"))
+
+        const tr = document.createElement("tr")
+        tr.innerHTML = `<th>№</th>
+                        <th>Количество изделий</th>
+                        <th>Общая площадь изделий</th>
+                        <th>Комментарий</th>
+                        <th>Этаж</th>
+                        <th>Адрес</th>
+                        <th>Статус</th>
+                        <th></th>`
 
 
-        async function createRoute(el, order_name, o_name, plan_date, date_logist, qu, sqr, transportinfo, contact, address, phone, floor, people3, people, deliverytime, sm_delivery, c_name, s_name) {
+        table.append(tr)
 
-            try {
-                orders = localStorage.getItem("orders")
-                if (orders == null) {
-                    orders = []
-                } else {
-                    orders = JSON.parse(orders)
+        for (let i = 0; i < orders.length; i++){
+            const tr = document.createElement("tr");
+            tr.setAttribute("draggable", "true")
+            tr.innerHTML = `<td>${orders[i]["o_name"]}</td>
+                            <td>${orders[i]["qu"]=='None' ? '' : orders[i]["qu"]}</td>
+                            <td>${orders[i]["sqr"]=='None' ? '' : orders[i]["sqr"]}</td>
+                            <td style="max-width: 200px;">${orders[i]["transportinfo"]=='None' ? '' : orders[i]["transportinfo"]}</td>
+                            <td>${orders[i]["floor"]=='None' ? '' : orders[i]["floor"]}</td>
+                            <td style="max-width: 200px;">${orders[i]["address"]}</td>
+                            <td>${orders[i]["s_name"]}</td>`
+
+            tr.addEventListener("dragstart", function(event) {
+                draggedItem = this;
+                event.dataTransfer.effectAllowed = "move";
+                event.dataTransfer.setData("text/plain", null);
+            })
+
+            tr.addEventListener("dragover", function(event) {
+                event.preventDefault();
+            })
+
+            tr.addEventListener("drop", function(event) {
+                if (draggedItem !== this) {
+                    var index1 = Array.from(draggables).indexOf(draggedItem);
+                    var index2 = Array.from(draggables).indexOf(this);
+                    console.log(index1, index2)
+                    swapElements(index1, index2);
                 }
-                let response = await fetch(`https://geocode-maps.yandex.ru/1.x/?apikey=52427b0d-4b85-4b1a-828b-ad4cf6903c9f&geocode=${address}&format=json`);
+            })
+            table.append(tr)
+        }
+        document.querySelector('.routes-popup').style.display = 'block';
+    }
 
-                let data = await response.json();
-
-                orders.push({"o_name": o_name, "plan_date": plan_date, "date_logist": date_logist, "qu": qu, "sqr": sqr, "transportinfo": transportinfo, "contact": contact, "address": address, "phone": phone, "floor": floor, "manager": people3, "calc_manager": people, "delivery_time": deliverytime, "delivery_sum": sm_delivery, "c_name": c_name, "s_name": s_name, "pos": data.response.GeoObjectCollection.featureMember[0].GeoObject.Point.pos})
-
-                localStorage.setItem("orders", JSON.stringify(orders))
-
-                el.style.backgroundColor = 'red';
-
-                el.textContent = 'Добавлено'
-
-            } catch (err) {
-                var x = document.getElementById("snackbar")
-
-                x.className = "show";
-
-                setTimeout(function(){ x.className = x.className.replace("show", ""); }, 5000);
+    function removeRouteByName(o_name){
+        orders = JSON.parse(localStorage.getItem("orders"))
+        for (let i = 0; i < orders.length; i++){
+            if (orders[i]["o_name"] == o_name){
+                orders.splice(i, 1);
+                break
             }
+        }
+        localStorage.setItem("orders", JSON.stringify(orders))
+    }
+
+    function mapRender(){
+        for (const el of document.querySelectorAll(".map-popup .popup-content div")){
+            el.remove()
+        }
+        const cart_popup = document.querySelector('.map-popup .popup-content')
+        const div = document.createElement("div");
+        orders = JSON.parse(localStorage.getItem("orders"))
+
+        let routes = [];
+
+        for (const order of orders) {
+            routes.push(order["pos"].split(" ")[1] + "%2C" + order["pos"].split(" ")[0])
+        }
+
+
+        div.style.cssText = 'position:relative;overflow:hidden;'
+        div.innerHTML = `<a href="https://yandex.ru/maps/213/moscow/?utm_medium=mapframe&utm_source=maps" style="color:#eee;font-size:12px;position:absolute;top:0px;">Москва</a><a href="https://yandex.ru/maps/213/moscow/?ll=37.617700%2C55.755863&mode=routes&routes%5BactiveComparisonMode%5D=auto&rtext=55.865709%2C36.768240~${routes.join('~')}&rtt=comparison&ruri=~&utm_medium=mapframe&utm_source=maps&z=10" style="color:#eee;font-size:12px;position:absolute;top:14px;">Яндекс Карты</a><iframe src="https://yandex.ru/map-widget/v1/?ll=37.617700%2C55.755863&mode=routes&routes%5BactiveComparisonMode%5D=auto&rtext=55.865709%2C36.768240~${routes.join('~')}&rtt=comparison&ruri=~&z=10" width="800" height="600" frameborder="1" allowfullscreen="true" style="position:relative;"></iframe>`
+        cart_popup.append(div)
+        document.querySelector('.map-popup').style.display = 'block';
+    }
+
+    async function saveRoute(){
+        orders = JSON.parse(localStorage.getItem("orders"))
+
+        let routes = [];
+
+        for (const order of orders) {
+            routes.push(order["pos"].split(" ")[1] + "%2C" + order["pos"].split(" ")[0])
+        }
+
+        let data = {
+            orders: JSON.parse(localStorage.getItem("orders")),
+            route_link: `https://yandex.ru/maps/213/moscow/?ll=37.617700%2C55.755863&mode=routes&routes%5BactiveComparisonMode%5D=auto&rtext=${routes.join('~')}&rtt=comparison&ruri=~&utm_medium=mapframe&utm_source=maps&z=10`
+        };
+
+        let response = await fetch('/create-route/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json;charset=utf-8'
+            },
+            body: JSON.stringify(data)
+        });
+
+        let result = await response.json();
+
+        localStorage.removeItem("orders")
+
+        location.reload()
+
+
+    }
+
+    function sortTableByDate() {
+        var table, rows, switching, i, x, y, shouldSwitch;
+        table = document.querySelector(".result__table.main-table");
+
+        switching = true
+
+        while (switching) {
+            switching = false;
+            rows = table.querySelectorAll(".result__table-body");
+
+            for (i = 0; i < rows.length - 1; i++) {
+                shouldSwitch = false;
+                x = rows[i].querySelector("td:nth-child(3) input").value;
+                y = rows[i + 1].querySelector("td:nth-child(3) input").value;
+
+                if (x < y) {
+                    shouldSwitch = true;
+                    break;
+                }
+            }
+
+            if (shouldSwitch) {
+                rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+                switching = true;
+            }
+        }
+    }
+
+    // async function addAll(){
+    //     orders = localStorage.getItem("orders")
+    //     if (orders == null) {
+    //         orders = []
+    //     } else {
+    //         orders = JSON.parse(orders)
+    //     }
+    //     const tr = document.querySelectorAll(".result__table-body")
+    //     for (const order of tr) {
+    //         let response = await fetch(`https://geocode-maps.yandex.ru/1.x/?apikey=52427b0d-4b85-4b1a-828b-ad4cf6903c9f&geocode=${order.querySelector("#address").textContent}&format=json`);
+
+    //         let data = await response.json();
+
             
-        }
+    //         orders.push({"o_name": order.querySelector("#o_name").textContent, "plan_date": order.querySelector("#plan_date").textContent, "date_logist": order.querySelector("#date_logist").value, "qu": order.querySelector("#qu").textContent, "sqr": order.querySelector("#sqr").textContent, "transportinfo": order.querySelector("#transportinfo").textContent, "contact": order.querySelector("#contact").textContent, "address": order.querySelector("#address").textContent, "phone": order.querySelector("#phone").textContent, "floor": order.querySelector("#floor").textContent, "c_name": order.querySelector("#c_name").textContent, "s_name": order.querySelector("#s_name").textContent, "pos": data.response.GeoObjectCollection.featureMember[0].GeoObject.Point.pos})
+    //     }
 
+    //     localStorage.setItem("orders", JSON.stringify(orders))
 
-        function renderTable(){
-            for (let table_body of document.querySelectorAll(".result__table-body.popup_table")){
-                table_body.remove()
-            }
-            const table = document.querySelector(".result__table.popup_table")
-            orders = JSON.parse(localStorage.getItem("orders"))
+    //     var x = document.getElementById("snackbar")
 
-            for (let i = 0; i < orders.length; i++){
-                const tr = document.createElement("tr");
-                tr.setAttribute("draggable", "true")
-                tr.classList.add("result__table-body")
-                tr.classList.add("popup_table")
-                tr.innerHTML = `<td>${orders[i]["o_name"]}</td>
-                                <td>${orders[i]["qu"]=='None' ? '' : orders[i]["qu"]}</td>
-                                <td>${orders[i]["sqr"]=='None' ? '' : orders[i]["sqr"]}</td>
-                                <td style="max-width: 200px;">${orders[i]["transportinfo"]=='None' ? '' : orders[i]["transportinfo"]}</td>
-                                <td>${orders[i]["floor"]=='None' ? '' : orders[i]["floor"]}</td>
-                                <td style="max-width: 200px;">${orders[i]["address"]}</td>
-                                <td>${orders[i]["s_name"]}</td>`
+    //     x.className = "show";
 
-                tr.addEventListener("dragstart", function(event) {
-                    draggedItem = this;
-                    event.dataTransfer.effectAllowed = "move";
-                    event.dataTransfer.setData("text/plain", null);
-                })
+    //     setTimeout(function(){ x.className = x.className.replace("show", ""); }, 3000);
+    // }
 
-                tr.addEventListener("dragover", function(event) {
-                    event.preventDefault();
-                })
-
-                tr.addEventListener("drop", function(event) {
-                    if (draggedItem !== this) {
-                        var index1 = Array.from(draggables).indexOf(draggedItem);
-                        var index2 = Array.from(draggables).indexOf(this);
-                        console.log(index1, index2)
-                        swapElements(index1, index2);
-                    }
-                })
-                table.append(tr)
-            }
-            document.querySelector('.popup-info').style.display = 'block';
-        }
-
-        function removeRouteByName(o_name){
-            orders = JSON.parse(localStorage.getItem("orders"))
-            for (let i = 0; i < orders.length; i++){
-                if (orders[i]["o_name"] == o_name){
-                    orders.splice(i, 1);
-                    break
-                }
-            }
-            localStorage.setItem("orders", JSON.stringify(orders))
-        }
-
-        function cartRender(){
-            for (const el of document.querySelectorAll(".popup-cart .cart-popup div")){
-                el.remove()
-            }
-            const cart_popup = document.querySelector('.popup-cart .cart-popup')
-            const div = document.createElement("div");
-            orders = JSON.parse(localStorage.getItem("orders"))
-
-            let routes = [];
-
-            for (const order of orders) {
-                routes.push(order["pos"].split(" ")[1] + "%2C" + order["pos"].split(" ")[0])
-            }
-
-
-            div.style.cssText = 'position:relative;overflow:hidden;'
-            div.innerHTML = `<a href="https://yandex.ru/maps/213/moscow/?utm_medium=mapframe&utm_source=maps" style="color:#eee;font-size:12px;position:absolute;top:0px;">Москва</a><a href="https://yandex.ru/maps/213/moscow/?ll=37.617700%2C55.755863&mode=routes&routes%5BactiveComparisonMode%5D=auto&rtext=55.865709%2C36.768240~${routes.join('~')}&rtt=comparison&ruri=~&utm_medium=mapframe&utm_source=maps&z=10" style="color:#eee;font-size:12px;position:absolute;top:14px;">Яндекс Карты</a><iframe src="https://yandex.ru/map-widget/v1/?ll=37.617700%2C55.755863&mode=routes&routes%5BactiveComparisonMode%5D=auto&rtext=55.865709%2C36.768240~${routes.join('~')}&rtt=comparison&ruri=~&z=10" width="800" height="600" frameborder="1" allowfullscreen="true" style="position:relative;"></iframe>`
-            cart_popup.append(div)
-            document.querySelector('.popup-cart').style.display = 'block';
-        }
-
-        async function saveRoute(){
-            orders = JSON.parse(localStorage.getItem("orders"))
-
-            let routes = [];
-
-            for (const order of orders) {
-                routes.push(order["pos"].split(" ")[1] + "%2C" + order["pos"].split(" ")[0])
-            }
-
-            let data = {
-                orders: JSON.parse(localStorage.getItem("orders")),
-                route_link: `https://yandex.ru/maps/213/moscow/?ll=37.617700%2C55.755863&mode=routes&routes%5BactiveComparisonMode%5D=auto&rtext=${routes.join('~')}&rtt=comparison&ruri=~&utm_medium=mapframe&utm_source=maps&z=10`
-            };
-
-            let response = await fetch('/create-route/', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json;charset=utf-8'
-                },
-                body: JSON.stringify(data)
-            });
-
-            let result = await response.json();
-
-            localStorage.removeItem("orders")
-
-            location.reload()
-
-
-        }
-
-        function sortTableByDate() {
-            var table, rows, switching, i, x, y, shouldSwitch;
-            table = document.querySelector(".result__table.main-table");
-
-            switching = true
-
-            while (switching) {
-                switching = false;
-                rows = table.querySelectorAll(".result__table-body");
-
-                for (i = 0; i < rows.length - 1; i++) {
-                    shouldSwitch = false;
-                    x = rows[i].querySelector("td:nth-child(3) input").value;
-                    y = rows[i + 1].querySelector("td:nth-child(3) input").value;
-
-                    if (x < y) {
-                        shouldSwitch = true;
-                        break;
-                    }
-                }
-
-                if (shouldSwitch) {
-                    rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
-                    switching = true;
-                }
-            }
-        }
-
-        // async function addAll(){
-        //     orders = localStorage.getItem("orders")
-        //     if (orders == null) {
-        //         orders = []
-        //     } else {
-        //         orders = JSON.parse(orders)
-        //     }
-        //     const tr = document.querySelectorAll(".result__table-body")
-        //     for (const order of tr) {
-        //         let response = await fetch(`https://geocode-maps.yandex.ru/1.x/?apikey=52427b0d-4b85-4b1a-828b-ad4cf6903c9f&geocode=${order.querySelector("#address").textContent}&format=json`);
-
-        //         let data = await response.json();
-
-                
-        //         orders.push({"o_name": order.querySelector("#o_name").textContent, "plan_date": order.querySelector("#plan_date").textContent, "date_logist": order.querySelector("#date_logist").value, "qu": order.querySelector("#qu").textContent, "sqr": order.querySelector("#sqr").textContent, "transportinfo": order.querySelector("#transportinfo").textContent, "contact": order.querySelector("#contact").textContent, "address": order.querySelector("#address").textContent, "phone": order.querySelector("#phone").textContent, "floor": order.querySelector("#floor").textContent, "c_name": order.querySelector("#c_name").textContent, "s_name": order.querySelector("#s_name").textContent, "pos": data.response.GeoObjectCollection.featureMember[0].GeoObject.Point.pos})
-        //     }
-
-        //     localStorage.setItem("orders", JSON.stringify(orders))
-
-        //     var x = document.getElementById("snackbar")
-
-        //     x.className = "show";
-
-        //     setTimeout(function(){ x.className = x.className.replace("show", ""); }, 3000);
-        // }
-
-    </script>
-</body>
-
-</html>
+</script>
+{% endblock script %}
